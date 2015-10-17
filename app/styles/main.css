@@ -41,10 +41,20 @@ header {
 .tile:nth-child(1), .tile:nth-child(2) {
   box-shadow: 1px 0px black;
 }
+.playable-tile {
+  background-color: rgba(200, 200, 200, 0.5);
+}
+.playable-tile:hover {
+  background-color: rgba(200, 200, 0, 0.5);
+}
+.x-won-tile {
+  background-color: rgba(0, 200, 0, 0.5);
+}
+.o-won-tile {
+  background-color: rgba(200, 0, 0, 0.5);
+}
+
 .credit {
   margin-top: 3rem;
   text-align: right;
-}
-.tile:hover {
-  background-color: rgba(200, 200, 200, 0.5);
 }
