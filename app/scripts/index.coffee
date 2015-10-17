@@ -6,6 +6,8 @@ $ = jQuery
 
 $ ->
 
+  agent = new MinimaxAgent 3
+
   game = null
 
   int = (s) -> parseInt s, 10
@@ -20,28 +22,46 @@ $ ->
       .removeClass 'o-won-tile'
       .text ''
     game = new UltimateTicTacToe
-    step()
+    humanPlays()
 
-  step = ->
-
+  unplayable = ->
     ($ '.tile')
       .removeClass 'playable-tile'
       .off 'click'
 
+  markWins = ->
     for i in [0...9]
       for j in game.winOn i
         wonClass = if (game.at i, j) is X then 'x-won-tile' else 'o-won-tile'
         ($ "##{i}\\,#{j}").addClass wonClass
 
-    if game.isTerminal()
-      ($ '#game-over-text').text switch
-        when game.isWin(X) then 'X Wins!'
-        when game.isWin(O) then 'O Wins!'
-        else 'Draw!'
-      ($ '#game-over')
-        .on 'hidden.bs.modal', -> setup()
-        .modal 'show'
-      return
+  checkGameOver = ->
+    return no unless game.isTerminal()
+    ($ '#game-over-text').text switch
+      when game.isWin(X) then 'X Wins!'
+      when game.isWin(O) then 'O Wins!'
+      else 'Draw!'
+    ($ '#game-over')
+      .on 'hidden.bs.modal', -> setup()
+      .modal 'show'
+    yes
+
+  computerPlays = ->
+    unplayable()
+    markWins()
+    return if checkGameOver()
+
+    [i, j] = agent.nextAction game
+    ($ "##{i}\\,#{j}").text (decode game.nextPlayer).toLowerCase()
+    game = game.play [i, j]
+
+    humanPlays()
+
+  humanPlays = ->
+
+    unplayable()
+    markWins()
+    return if checkGameOver()
 
     for [i,j] in game.possibleActions()
       ($ "##{i}\\,#{j}").addClass 'playable-tile'
@@ -51,6 +71,6 @@ $ ->
         tile = ($ this)
         tile.text (decode game.nextPlayer).toLowerCase()
         game = game.play parseId tile.get(0).id
-        step()
+        computerPlays()
 
   setup()
