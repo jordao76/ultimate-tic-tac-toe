@@ -47,15 +47,19 @@ $ ->
     yes
 
   computerPlays = ->
-    unplayable()
-    markWins()
-    return if checkGameOver()
+    window.setTimeout ->
 
-    [i, j] = agent.nextAction game
-    ($ "##{i}\\,#{j}").text (decode game.nextPlayer).toLowerCase()
-    game = game.play [i, j]
+      unplayable()
+      markWins()
+      return if checkGameOver()
 
-    humanPlays()
+      [i, j] = agent.nextAction game
+      ($ "##{i}\\,#{j}")
+        .text (decode game.nextPlayer).toLowerCase()
+        .highlight()
+      game = game.play [i, j]
+
+      humanPlays()
 
   humanPlays = ->
 
@@ -74,3 +78,20 @@ $ ->
         computerPlays()
 
   setup()
+
+$.fn.highlight = ->
+  ($ this).each ->
+    el = $ this
+    $ '<div/>'
+      .width el.outerWidth()
+      .height el.outerHeight()
+      .css
+        'position': 'absolute'
+        'left': el.offset().left
+        'top': el.offset().top
+        'background-color': '#ffff77'
+        'opacity': .7
+        'z-index': 10
+      .appendTo 'body'
+      .fadeOut 1000
+      .queue -> ($ this).remove()
