@@ -32,9 +32,14 @@ gulp.task 'scripts', ['lint'], ->
     .pipe $.sourcemaps.write './'
     .pipe gulp.dest 'dist/scripts'
 
-gulp.task 'html', ->
+gulp.task 'jade', ->
+  gulp.src 'app/*.jade'
+    .pipe $.jade pretty: yes
+    .pipe gulp.dest '.tmp'
+
+gulp.task 'html', ['jade'], ->
   assets = $.useref.assets searchPath: 'app'
-  gulp.src 'app/*.html'
+  gulp.src '.tmp/*.html'
     .pipe assets
     .pipe $.if '*.css', $.csso()
     .pipe assets.restore()
@@ -68,10 +73,10 @@ gulp.task 'connect', ['build'], ->
 
 gulp.task 'watch', ['connect'], ->
   gulp.watch ['app/**/*.coffee'], ['scripts']
-  gulp.watch ['app/*.html', 'app/styles/**/*.css'], ['html']
+  gulp.watch ['app/*.jade', 'app/styles/**/*.css'], ['html']
 
   $.livereload.listen()
-  gulp.watch ['dist/*.html', 'dist/styles/**/*.css', 'dist/scripts/**/*.coffee']
+  gulp.watch ['dist/*.html', 'dist/styles/**/*.css', 'dist/scripts/**/*.js']
     .on 'change', $.livereload.changed
 
 gulp.task 'serve', ['watch'], ->
