@@ -81,3 +81,30 @@ gulp.task 'watch', ['connect'], ->
 
 gulp.task 'serve', ['watch'], ->
   (require 'opn') 'http://localhost:9000'
+
+# deploy
+
+gulp.task 'cdnize', ['build'], ->
+  gulp.src 'dist/index.html'
+    .pipe $.cdnizer [
+      {
+        file: '/bower_components/jquery/dist/jquery.min.js'
+        package: 'jquery'
+        cdn: 'http://code.jquery.com/jquery-${ version }.min.js'
+      }
+      {
+        file: '/bower_components/bootstrap/dist/css/bootstrap.min.css'
+        package: 'bootstrap'
+        cdn: 'https://maxcdn.bootstrapcdn.com/bootstrap/${ version }/css/bootstrap.min.css'
+      }
+      {
+        file: '/bower_components/bootstrap/dist/js/bootstrap.min.js'
+        package: 'bootstrap'
+        cdn: 'https://maxcdn.bootstrapcdn.com/bootstrap/${ version }/js/bootstrap.min.js'
+      }
+    ]
+    .pipe gulp.dest './dist'
+
+gulp.task 'deploy', ['cdnize'], ->
+  gulp.src 'dist/**/*'
+    .pipe $.ghPages()
