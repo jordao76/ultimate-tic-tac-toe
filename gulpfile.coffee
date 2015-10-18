@@ -22,15 +22,19 @@ gulp.task 'scripts', ['lint'], ->
   buffer = require 'vinyl-buffer'
   coffeeify = require 'coffeeify'
 
-  browserify entries: ['./app/scripts/index.coffee'], extensions: ['.coffee'], debug: true
-    .transform(coffeeify)
-    .bundle()
-    .pipe source 'main.min.js'
-    .pipe buffer()
-    .pipe $.sourcemaps.init loadMaps: true
-    .pipe $.uglify()
-    .pipe $.sourcemaps.write './'
-    .pipe gulp.dest 'dist/scripts'
+  transform = (sourceFile, targetFile) ->
+    browserify entries: ["./app/scripts/#{sourceFile}"], extensions: ['.coffee'], debug: true
+      .transform(coffeeify)
+      .bundle()
+      .pipe source targetFile
+      .pipe buffer()
+      .pipe $.sourcemaps.init loadMaps: true
+      .pipe $.uglify()
+      .pipe $.sourcemaps.write './'
+      .pipe gulp.dest 'dist/scripts'
+
+  transform 'index.coffee', 'main.min.js'
+  transform 'minimax-worker.coffee', 'minimax-worker.min.js'
 
 gulp.task 'jade', ->
   gulp.src 'app/*.jade'

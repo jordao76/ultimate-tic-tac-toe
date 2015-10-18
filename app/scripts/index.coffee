@@ -1,8 +1,10 @@
 $ = jQuery
 
-{MinimaxAgent} = require 'aye-aye'
 {X, O, decode} = require 'aye-aye/lib/games/bin-tic-tac-toe'
 {UltimateTicTacToe} = require 'aye-aye/lib/games/ultimate-tic-tac-toe'
+
+UltimateTicTacToe::state = ->
+  {@a, @nextPlayer, @lastPlayedPosition, @depth}
 
 $ ->
 
@@ -10,13 +12,17 @@ $ ->
   playerX = null
   playerO = null
 
+  createPlayerX = -> humanPlayer()
+  createPlayerO = -> computerPlayer()
+
   next = ->
     player = if game.nextPlayer is X then playerX else playerO
     player.play()
 
   unplayable = ->
     $ '.tile'
-      .removeClass 'playable-tile'
+      .removeClass 'human-playable-tile'
+      .removeClass 'computer-playable-tile'
       .off 'click'
 
   markWins = ->
@@ -28,29 +34,42 @@ $ ->
 
   checkGameOver = ->
     return no unless game.isTerminal()
+    playerX.end?()
+    playerO.end?()
     $ '#game-over-text'
       .text switch
         when game.isWin(X) then 'X Wins!'
         when game.isWin(O) then 'O Wins!'
         else 'Draw!'
     $ '#game-over'
-      .on 'hidden.bs.modal', -> setup()
+      .off 'hidden.bs.modal'
+      .on 'hidden.bs.modal', setup
       .modal 'show'
     yes
 
   computerPlayer = (depth = 3) ->
-    agent = new MinimaxAgent depth
+    worker = new Worker 'scripts/minimax-worker.min.js'
+    worker.postMessage command: 'setup', depth: depth
+    worker.onmessage = (e) ->
+      [i, j] = e.data.action
+      $ "##{i}\\,#{j}"
+        .text (decode game.nextPlayer).toLowerCase()
+        .highlight()
+      game = game.play [i, j]
+      next()
     play: ->
-      window.setTimeout ->
-        unplayable()
-        markWins()
-        return if checkGameOver()
-        [i, j] = agent.nextAction game
-        $ "##{i}\\,#{j}"
-          .text (decode game.nextPlayer).toLowerCase()
-          .highlight()
-        game = game.play [i, j]
-        next()
+      unplayable()
+      markWins()
+      return if checkGameOver()
+      playable 'computer-playable-tile'
+      worker.postMessage command: 'play', gameState: game.state()
+    end: ->
+      worker.terminate()
+
+  playable = (className) ->
+    for [i,j] in game.possibleActions()
+      $ "##{i}\\,#{j}"
+        .addClass className
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
@@ -61,10 +80,8 @@ $ ->
       unplayable()
       markWins()
       return if checkGameOver()
-      for [i,j] in game.possibleActions()
-        $ "##{i}\\,#{j}"
-          .addClass 'playable-tile'
-      $ '.playable-tile'
+      playable 'human-playable-tile'
+      $ '.human-playable-tile'
         .on 'click', ->
           tile = ($ this)
           tile.text (decode game.nextPlayer).toLowerCase()
@@ -72,14 +89,13 @@ $ ->
           next()
 
   setup = ->
-    playerX = humanPlayer()
-    playerO = computerPlayer()
+    game = new UltimateTicTacToe
+    playerX = createPlayerX()
+    playerO = createPlayerO()
     $ '.tile'
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
       .text ''
-    game = new UltimateTicTacToe
-    game.lastPlayedPosition = null
     next()
 
   setup()
