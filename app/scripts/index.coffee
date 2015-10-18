@@ -22,6 +22,7 @@ $ ->
       .removeClass 'o-won-tile'
       .text ''
     game = new UltimateTicTacToe
+    game.lastPlayedPosition = null
     humanPlays()
 
   unplayable = ->

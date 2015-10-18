@@ -25,11 +25,11 @@ html(lang='en')
       each urow in [0,1,2]
         .board-row.row
           each ucolumn in [0,1,2]
-            .tic-tac-toe.container.col-sm-4
+            .tic-tac-toe.container.col-xs-4
               each row in [0,1,2]
                 .ttt-row.row
                   each column in [0,1,2]
-                    .tile.col-sm-4(id = "#{urow*3 + ucolumn},#{row*3 + column}")
+                    .tile.col-xs-4(id = "#{urow*3 + ucolumn},#{row*3 + column}")
         
       .credit
         | By 
