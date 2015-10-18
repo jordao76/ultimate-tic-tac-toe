@@ -22,7 +22,7 @@ $ ->
   playable = ->
     className =
       if game.nextPlayer is X then 'x-playable-tile' else 'o-playable-tile'
-    for [i,j] in game.possibleActions()
+    for [i, j] in game.possibleActions()
       $ "##{i}\\,#{j}"
         .addClass className
     className
@@ -56,6 +56,8 @@ $ ->
       .modal 'show'
     yes
 
+  playerText = -> (decode game.nextPlayer).toLowerCase()
+
   computerPlayer = (depth = 3) ->
     worker = new Worker 'scripts/minimax-worker.min.js'
     worker.postMessage command: 'setup', depth: depth
@@ -63,7 +65,7 @@ $ ->
       hideSpinner()
       [i, j] = e.data.action
       $ "##{i}\\,#{j}"
-        .text (decode game.nextPlayer).toLowerCase()
+        .text playerText()
         .highlight()
       game = game.play [i, j]
       next()
@@ -90,9 +92,9 @@ $ ->
       $ ".#{playableClassName}"
         .addClass 'human-playable-tile'
         .on 'click', ->
-          tile = ($ this)
-          tile.text (decode game.nextPlayer).toLowerCase()
-          game = game.play parseId tile.get(0).id
+          $tile = $ this
+          $tile.text playerText()
+          game = game.play parseId $tile.get(0).id
           next()
 
   setup = ->
@@ -105,19 +107,18 @@ $ ->
       .text ''
     next()
 
-  $spinner = $ '#spinner'
+  spinner = new Spinner lines: 9, radius: 7, length: 7
   spinnerTimeout = null
   spinnerThresholdMs = 100
   showSpinner = ->
     unless spinnerTimeout?
+      target = ($ '#spinner').get 0
       spinnerTimeout =
-        setTimeout (-> $spinner.css 'visibility', 'visible'), spinnerThresholdMs
+        setTimeout (-> spinner.spin target), spinnerThresholdMs
   hideSpinner = ->
     clearTimeout spinnerTimeout if spinnerTimeout?
-    $spinner.css 'visibility', 'hidden'
+    spinner.stop()
     spinnerTimeout = null
-  hideSpinner()
-  new Spinner(lines: 9, radius: 7, length: 7).spin $spinner.get(0)
 
   setup()
 
