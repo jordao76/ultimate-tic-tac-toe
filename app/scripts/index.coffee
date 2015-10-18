@@ -19,10 +19,19 @@ $ ->
     player = if game.nextPlayer is X then playerX else playerO
     player.play()
 
+  playable = ->
+    className =
+      if game.nextPlayer is X then 'x-playable-tile' else 'o-playable-tile'
+    for [i,j] in game.possibleActions()
+      $ "##{i}\\,#{j}"
+        .addClass className
+    className
+
   unplayable = ->
     $ '.tile'
+      .removeClass 'x-playable-tile'
+      .removeClass 'o-playable-tile'
       .removeClass 'human-playable-tile'
-      .removeClass 'computer-playable-tile'
       .off 'click'
 
   markWins = ->
@@ -61,15 +70,10 @@ $ ->
       unplayable()
       markWins()
       return if checkGameOver()
-      playable 'computer-playable-tile'
+      playable()
       worker.postMessage command: 'play', gameState: game.state()
     end: ->
       worker.terminate()
-
-  playable = (className) ->
-    for [i,j] in game.possibleActions()
-      $ "##{i}\\,#{j}"
-        .addClass className
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
@@ -80,8 +84,9 @@ $ ->
       unplayable()
       markWins()
       return if checkGameOver()
-      playable 'human-playable-tile'
-      $ '.human-playable-tile'
+      playableClassName = playable()
+      $ ".#{playableClassName}"
+        .addClass 'human-playable-tile'
         .on 'click', ->
           tile = ($ this)
           tile.text (decode game.nextPlayer).toLowerCase()
