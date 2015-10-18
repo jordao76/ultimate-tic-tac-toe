@@ -17,7 +17,6 @@ header {
 .board-row:nth-child(1), .board-row:nth-child(2) {
   box-shadow: 0px 3px black;
 }
-
 .tic-tac-toe {
   margin: 0 auto;
   width: 180px;
@@ -56,8 +55,10 @@ header {
 .o-won-tile {
   background-color: rgba(200, 0, 0, 0.5);
 }
-
 .credit {
   margin-top: 3rem;
   text-align: right;
+}
+#spinner {
+  height: 70px;
 }

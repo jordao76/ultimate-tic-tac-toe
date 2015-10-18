@@ -60,6 +60,7 @@ $ ->
     worker = new Worker 'scripts/minimax-worker.min.js'
     worker.postMessage command: 'setup', depth: depth
     worker.onmessage = (e) ->
+      hideSpinner()
       [i, j] = e.data.action
       $ "##{i}\\,#{j}"
         .text (decode game.nextPlayer).toLowerCase()
@@ -71,6 +72,7 @@ $ ->
       markWins()
       return if checkGameOver()
       playable()
+      showSpinner()
       worker.postMessage command: 'play', gameState: game.state()
     end: ->
       worker.terminate()
@@ -102,6 +104,20 @@ $ ->
       .removeClass 'o-won-tile'
       .text ''
     next()
+
+  $spinner = $ '#spinner'
+  spinnerTimeout = null
+  spinnerThresholdMs = 100
+  showSpinner = ->
+    unless spinnerTimeout?
+      spinnerTimeout =
+        setTimeout (-> $spinner.css 'visibility', 'visible'), spinnerThresholdMs
+  hideSpinner = ->
+    clearTimeout spinnerTimeout if spinnerTimeout?
+    $spinner.css 'visibility', 'hidden'
+    spinnerTimeout = null
+  hideSpinner()
+  new Spinner(lines: 9, radius: 7, length: 7).spin $spinner.get(0)
 
   setup()
 

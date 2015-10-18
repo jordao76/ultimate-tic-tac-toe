@@ -106,6 +106,11 @@ gulp.task 'cdnize', ['build'], ->
         package: 'bootstrap'
         cdn: 'https://maxcdn.bootstrapcdn.com/bootstrap/${ version }/js/bootstrap.min.js'
       }
+      {
+        file: '/bower_components/spin.js/spin.min.js'
+        package: 'spin.js'
+        cdn: 'https://cdnjs.cloudflare.com/ajax/libs/spin.js/${ version }/spin.min.js'
+      }
     ]
     .pipe gulp.dest './dist'
 

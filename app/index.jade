@@ -30,13 +30,15 @@ html(lang='en')
                 .ttt-row.row
                   each column in [0,1,2]
                     .tile.col-xs-4(id = "#{urow*3 + ucolumn},#{row*3 + column}")
-        
-      .credit
-        | By 
-        a(href='https://github.com/jordao76') Jordão
-        | . Check it out on 
-        a(href='https://github.com/jordao76/ultimate-tic-tac-toe') GitHub
-        | .
+
+      .row
+        #spinner.col-xs-2
+        .credit.col-xs-10
+          | By
+          a(href='https://github.com/jordao76') Jordão
+          | . Check it out on
+          a(href='https://github.com/jordao76/ultimate-tic-tac-toe') GitHub
+          | .
 
     #game-over.modal.fade(tabindex='-1', role='dialog', aria-labelledby='game-over-label')
       .modal-dialog(role='document')
@@ -58,4 +60,5 @@ html(lang='en')
       ga('send', 'pageview');
     script(type='text/javascript', src='/bower_components/jquery/dist/jquery.min.js')
     script(type='text/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+    script(type='text/javascript', src='/bower_components/spin.js/spin.min.js')
     script(type='text/javascript', src='scripts/main.min.js')
