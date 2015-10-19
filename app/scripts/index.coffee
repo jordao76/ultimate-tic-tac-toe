@@ -43,17 +43,11 @@ $ ->
 
   checkGameOver = ->
     return no unless game.isTerminal()
-    playerX.end?()
-    playerO.end?()
-    $ '#game-over-text'
+    $ '#info'
       .text switch
         when game.isWin(X) then 'X Wins!'
         when game.isWin(O) then 'O Wins!'
         else 'Draw!'
-    $ '#game-over'
-      .off 'hidden.bs.modal'
-      .on 'hidden.bs.modal', setup
-      .modal 'show'
     yes
 
   playerText = -> (decode game.nextPlayer).toLowerCase()
@@ -78,6 +72,7 @@ $ ->
       worker.postMessage command: 'play', gameState: game.state()
     end: ->
       worker.terminate()
+    toString: -> "computer"
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
@@ -96,11 +91,17 @@ $ ->
           $tile.text playerText()
           game = game.play parseId $tile.get(0).id
           next()
+    toString: -> "human"
 
   setup = ->
     game = new UltimateTicTacToe
+    playerX?.end?()
+    playerO?.end?()
+    hideSpinner()
     playerX = createPlayerX()
     playerO = createPlayerO()
+    $ '#info'
+      .text playerX + " vs " + playerO
     $ '.tile'
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
@@ -120,6 +121,8 @@ $ ->
     spinner.stop()
     spinnerTimeout = null
 
+  $ '#btn-new-game'
+    .on 'click', setup
   setup()
 
 $.fn.highlight = ->

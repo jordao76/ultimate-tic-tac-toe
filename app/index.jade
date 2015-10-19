@@ -32,24 +32,18 @@ html(lang='en')
                     .tile.col-xs-4(id = "#{urow*3 + ucolumn},#{row*3 + column}")
 
       .row
-        #spinner.col-xs-2
-        .credit.col-xs-10
+        #spinner.col-xs-3
+        #info.col-xs-6
+        #commands.col-xs-3
+          #btn-new-game.button.btn.btn-primary New game
+
+      .row
+        #credit.col-xs-12
           | By 
           a(href='https://github.com/jordao76') Jordão
           | . Check it out on 
           a(href='https://github.com/jordao76/ultimate-tic-tac-toe') GitHub
           | .
-
-    #game-over.modal.fade(tabindex='-1', role='dialog', aria-labelledby='game-over-label')
-      .modal-dialog(role='document')
-        .modal-content
-          .modal-header
-            button.close(type='button', data-dismiss='modal', aria-label='Close')
-              span(aria-hidden='true') ×
-            h4#game-over-label.modal-title Game Over
-          #game-over-text.modal-body
-          .modal-footer
-            button.btn.btn-primary(type='button', data-dismiss='modal') Start over
 
     script.
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -55,10 +55,18 @@ header {
 .o-won-tile {
   background-color: rgba(200, 0, 0, 0.5);
 }
-.credit {
-  margin-top: 3rem;
+#info {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 2rem;
+}
+#commands {
+  padding-top: 10px;
   text-align: right;
 }
 #spinner {
-  height: 70px;
+  height: 60px;
+}
+#credit {
+  text-align: right;
 }
