@@ -36,10 +36,14 @@ $ ->
 
   markWins = ->
     for i in [0...9]
+      wonBy = null
       for j in game.winOn i
-        wonClass = if (game.at i, j) is X then 'x-won-tile' else 'o-won-tile'
-        $ "##{i}\\,#{j}"
-          .addClass wonClass
+        wonBy = game.at i, j
+        wonClass = if wonBy is X then 'x-won-tile' else 'o-won-tile'
+        ($ "##{i}\\,#{j}").addClass wonClass
+      if wonBy?
+        wonClass = if wonBy is X then 'x-won-board' else 'o-won-board'
+        ($ '#' + i).addClass wonClass
 
   checkGameOver = ->
     return no unless game.isTerminal()
@@ -102,6 +106,9 @@ $ ->
     playerO = createPlayerO()
     $ '#info'
       .text playerX + " vs " + playerO
+    $ '.tic-tac-toe'
+      .removeClass 'x-won-board'
+      .removeClass 'o-won-board'
     $ '.tile'
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
