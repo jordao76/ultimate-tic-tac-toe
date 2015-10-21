@@ -3,6 +3,9 @@ $ = jQuery
 {X, O, decode} = require 'aye-aye/lib/games/bin-tic-tac-toe'
 {UltimateTicTacToe} = require 'aye-aye/lib/games/ultimate-tic-tac-toe'
 
+{showSpinner, hideSpinner} = require './spinner'
+require './highlight'
+
 UltimateTicTacToe::state = ->
   {@a, @nextPlayer, @lastPlayedPosition, @depth}
 
@@ -11,7 +14,6 @@ $ ->
   game = null
   playerX = null
   playerO = null
-
   createPlayerX = -> humanPlayer()
   createPlayerO = -> computerPlayer()
 
@@ -57,16 +59,19 @@ $ ->
   playerText = -> (decode game.nextPlayer).toLowerCase()
 
   computerPlayer = (depth = 3) ->
-    worker = new Worker 'scripts/minimax-worker.min.js'
-    worker.postMessage command: 'setup', depth: depth
-    worker.onmessage = (e) ->
-      hideSpinner()
-      [i, j] = e.data.action
-      $ "##{i}\\,#{j}"
-        .text playerText()
-        .highlight()
-      game = game.play [i, j]
-      next()
+    worker = null
+    setup: (done) ->
+      worker = new Worker 'scripts/minimax-worker.min.js'
+      worker.postMessage command: 'setup', depth: depth
+      worker.onmessage = (e) ->
+        hideSpinner()
+        [i, j] = e.data.action
+        $ "##{i}\\,#{j}"
+          .text playerText()
+          .highlight()
+        game = game.play [i, j]
+        next()
+      done()
     play: ->
       unplayable()
       markWins()
@@ -74,8 +79,7 @@ $ ->
       playable()
       showSpinner()
       worker.postMessage command: 'play', gameState: game.state()
-    end: ->
-      worker.terminate()
+    end: -> worker.terminate()
     toString: -> "computer"
 
   humanPlayer = ->
@@ -83,6 +87,7 @@ $ ->
     parseId = (text) ->
       match = text.match /(\d),(\d)/
       [(int match[1]), (int match[2])]
+    setup: (done) -> done()
     play: ->
       unplayable()
       markWins()
@@ -98,14 +103,19 @@ $ ->
     toString: -> "human"
 
   setup = ->
+    teardown()
     game = new UltimateTicTacToe
+    [playerX, playerO] = [createPlayerX(), createPlayerO()]
+    # swap for next time
+    [createPlayerX, createPlayerO] = [createPlayerO, createPlayerX]
+    $ '#info'
+      .text playerX + " vs " + playerO
+    playerX.setup -> playerO.setup -> next()
+
+  teardown = ->
     playerX?.end?()
     playerO?.end?()
     hideSpinner()
-    playerX = createPlayerX()
-    playerO = createPlayerO()
-    $ '#info'
-      .text playerX + " vs " + playerO
     $ '.tic-tac-toe'
       .removeClass 'x-won-board'
       .removeClass 'o-won-board'
@@ -113,38 +123,8 @@ $ ->
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
       .text ''
-    next()
-
-  spinner = new Spinner lines: 9, radius: 7, length: 7
-  spinnerTimeout = null
-  spinnerThresholdMs = 100
-  showSpinner = ->
-    unless spinnerTimeout?
-      target = ($ '#spinner').get 0
-      spinnerTimeout =
-        setTimeout (-> spinner.spin target), spinnerThresholdMs
-  hideSpinner = ->
-    clearTimeout spinnerTimeout if spinnerTimeout?
-    spinner.stop()
-    spinnerTimeout = null
 
   $ '#btn-new-game'
     .on 'click', setup
-  setup()
 
-$.fn.highlight = ->
-  ($ this).each ->
-    el = $ this
-    $ '<div/>'
-      .width el.outerWidth()
-      .height el.outerHeight()
-      .css
-        'position': 'absolute'
-        'left': el.offset().left
-        'top': el.offset().top
-        'background-color': '#ffff77'
-        'opacity': .7
-        'z-index': 10
-      .appendTo 'body'
-      .fadeOut 1000
-      .queue -> ($ this).remove()
+  setup()
