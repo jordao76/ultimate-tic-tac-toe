@@ -9,10 +9,10 @@ player = null
 self.onmessage = (e) ->
   switch e.data.command
     when 'setup'
-      depth = e.data.depth
+      depth = e.data.args
       player = computerPlayer depth
     when 'play'
-      gameState = e.data.gameState
+      gameState = e.data.args
       game = UltimateTicTacToe.fromState gameState
       action = player.play game
       self.postMessage {action}

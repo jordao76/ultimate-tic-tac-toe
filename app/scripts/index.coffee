@@ -17,6 +17,13 @@ $ ->
   createPlayerX = -> humanPlayer()
   createPlayerO = -> computerPlayer()
 
+  # player :: {
+  #   setup : (done: None -> None) -> None
+  #   play : None -> None
+  #   end? : None -> None
+  #   toString : None -> Str
+  # }
+
   next = ->
     player = if game.nextPlayer is X then playerX else playerO
     player.play()
@@ -58,12 +65,17 @@ $ ->
 
   playerText = -> (decode game.nextPlayer).toLowerCase()
 
-  computerPlayer = (depth = 3) ->
-    worker = null
+  # bus :: {
+  #   open?
+  #   postMessage : (message : Any) -> None
+  #   onmessage
+  #   close?
+  #   toString
+  # }
+  messagingPlayer = (bus) ->
     setup: (done) ->
-      worker = new Worker 'scripts/minimax-worker.min.js'
-      worker.postMessage command: 'setup', depth: depth
-      worker.onmessage = (e) ->
+      bus.open?()
+      bus.onmessage (e) ->
         hideSpinner()
         [i, j] = e.data.action
         $ "##{i}\\,#{j}"
@@ -78,9 +90,19 @@ $ ->
       return if checkGameOver()
       playable()
       showSpinner()
-      worker.postMessage command: 'play', gameState: game.state()
-    end: -> worker.terminate()
-    toString: -> "computer"
+      bus.postMessage command: 'play', args: game.state()
+    end: -> bus.close?()
+    toString: -> bus.toString()
+
+  computerPlayer = (depth = 3) ->
+    worker = new Worker 'scripts/minimax-worker.min.js'
+    bus =
+      open: -> worker.postMessage command: 'setup', args: depth
+      postMessage: (m) -> worker.postMessage m
+      onmessage: (f) -> worker.onmessage = f
+      close: -> worker.terminate()
+      toString: -> 'computer'
+    messagingPlayer bus
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
