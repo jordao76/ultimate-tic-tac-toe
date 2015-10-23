@@ -18,13 +18,15 @@ $ ->
   createPlayerO = -> computerPlayer()
 
   # player :: {
-  #   setup : (done: None -> None) -> None
-  #   play : None -> None
-  #   end? : None -> None
-  #   toString : None -> Str
+  #   setup : (done: ->) ->
+  #   teardown : ->
+  #   play : ->
+  #   toString : -> Str
   # }
 
   next = ->
+    unplayable()
+    markWins()
     player = if game.nextPlayer is X then playerX else playerO
     player.play()
 
@@ -66,41 +68,41 @@ $ ->
   playerText = -> (decode game.nextPlayer).toLowerCase()
 
   # bus :: {
-  #   open?
-  #   postMessage : (message : Any) -> None
-  #   onmessage
-  #   close?
-  #   toString
+  #   setup : (done : ->)
+  #   teardown : ->
+  #   postMessage : (message : Any) ->
+  #   onMessage : (callback : (m: Any) ->) ->
+  #   toString : -> Str
   # }
   messagingPlayer = (bus) ->
+    onAction = ([i, j]) ->
+      hideSpinner()
+      $ "##{i}\\,#{j}"
+        .text playerText()
+        .highlight()
+      game = game.play [i, j]
+      next()
     setup: (done) ->
-      bus.open?()
-      bus.onmessage (e) ->
-        hideSpinner()
-        [i, j] = e.data.action
-        $ "##{i}\\,#{j}"
-          .text playerText()
-          .highlight()
-        game = game.play [i, j]
-        next()
-      done()
+      bus.setup ->
+        bus.onmessage (m) -> onAction m.action
+        done()
     play: ->
-      unplayable()
-      markWins()
       return if checkGameOver()
       playable()
       showSpinner()
       bus.postMessage command: 'play', args: game.state()
-    end: -> bus.close?()
+    teardown: -> bus.teardown()
     toString: -> bus.toString()
 
   computerPlayer = (depth = 3) ->
     worker = new Worker 'scripts/minimax-worker.min.js'
     bus =
-      open: -> worker.postMessage command: 'setup', args: depth
+      setup: (done) ->
+        worker.postMessage command: 'setup', args: depth
+        done()
       postMessage: (m) -> worker.postMessage m
-      onmessage: (f) -> worker.onmessage = f
-      close: -> worker.terminate()
+      onmessage: (f) -> worker.onmessage = (e) -> f e.data
+      teardown: -> worker.terminate()
       toString: -> 'computer'
     messagingPlayer bus
 
@@ -111,8 +113,6 @@ $ ->
       [(int match[1]), (int match[2])]
     setup: (done) -> done()
     play: ->
-      unplayable()
-      markWins()
       return if checkGameOver()
       playableClassName = playable()
       $ ".#{playableClassName}"
@@ -135,8 +135,8 @@ $ ->
     playerX.setup -> playerO.setup -> next()
 
   teardown = ->
-    playerX?.end?()
-    playerO?.end?()
+    playerX?.teardown?()
+    playerO?.teardown?()
     hideSpinner()
     $ '.tic-tac-toe'
       .removeClass 'x-won-board'
