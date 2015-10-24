@@ -1,3 +1,5 @@
+# coffeelint: disable=max_line_length
+
 $ = jQuery
 
 {X, O, decode} = require 'aye-aye/lib/games/bin-tic-tac-toe'
@@ -5,6 +7,9 @@ $ = jQuery
 
 {showSpinner, hideSpinner} = require './spinner'
 require './highlight'
+
+{RTC} = require './web-rtc'
+window.RTC = RTC
 
 $ ->
 
@@ -65,45 +70,15 @@ $ ->
 
   playerText = -> (decode game.nextPlayer).toLowerCase()
 
-  # bus :: {
-  #   setup : (done : ->)
-  #   teardown : ->
-  #   postMessage : (message : Any) ->
-  #   onMessage : (callback : (m: Any) ->) ->
-  #   toString : -> Str
-  # }
-  messagingPlayer = (bus) ->
-    onAction = ([i, j]) ->
-      hideSpinner()
-      $ "##{i}\\,#{j}"
-        .text playerText()
-        .highlight()
-      game = game.play [i, j]
-      lastAction = [i, j]
-      next()
-    setup: (done) ->
-      bus.setup ->
-        bus.onmessage (m) -> onAction m.action
-        done()
-    play: ->
-      return if checkGameOver()
-      playable()
-      showSpinner()
-      bus.postMessage command: 'play', args: {lastAction}
-    teardown: -> bus.teardown()
-    toString: -> bus.toString()
-
-  computerPlayer = (depth = 3) ->
-    worker = new Worker 'scripts/minimax-worker.min.js'
-    bus =
-      setup: (done) ->
-        worker.postMessage command: 'setup', args: {depth}
-        done()
-      postMessage: (m) -> worker.postMessage m
-      onmessage: (f) -> worker.onmessage = (e) -> f e.data
-      teardown: -> worker.terminate()
-      toString: -> 'computer'
-    messagingPlayer bus
+  playAction = (action) ->
+    [i, j] = action
+    hideSpinner()
+    $ "##{i}\\,#{j}"
+      .text playerText()
+      .highlight()
+    game = game.play action
+    lastAction = action
+    next()
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
@@ -118,12 +93,48 @@ $ ->
         .addClass 'human-playable-tile'
         .on 'click', ->
           $tile = $ this
-          $tile.text playerText()
           action = parseAction $tile.get(0).id
-          game = game.play action
-          lastAction = action
-          next()
+          playAction action
     toString: -> "human"
+
+  computerPlayer = (depth = 3) ->
+    worker = new Worker 'scripts/minimax-worker.min.js'
+    setup: (done) ->
+      worker.onmessage = (e) -> playAction e.data.action
+      worker.postMessage command: 'setup', args: {depth}
+      done()
+    play: ->
+      return if checkGameOver()
+      playable()
+      showSpinner()
+      worker.postMessage command: 'play', args: {lastAction}
+    teardown: -> worker.terminate()
+    toString: -> 'computer'
+
+  RTC.greet()
+  RTC.ondatachannelopen = ->
+    # remote channel open
+    if RTC.I_am_a_host
+      createPlayerX = -> humanPlayer()
+      createPlayerO = -> remotePlayer()
+    else
+      createPlayerX = -> remotePlayer()
+      createPlayerO = -> humanPlayer()
+    setup()
+
+  remotePlayer = ->
+    newGame = -> RTC.send_message "new"
+    ($ '#btn-new-game').on 'click', newGame
+    RTC.onmessage = (data) ->
+      if data is "new" then setup() else playAction data
+    setup: (done) -> done()
+    play: ->
+      unless checkGameOver()
+        playable()
+        showSpinner()
+      RTC.send_message lastAction if lastAction?
+    teardown: -> ($ '#btn-new-game').off 'click', newGame
+    toString: -> 'remote'
 
   setup = ->
     teardown()
@@ -133,7 +144,7 @@ $ ->
     # swap for next time
     [createPlayerX, createPlayerO] = [createPlayerO, createPlayerX]
     $ '#info'
-      .text playerX + " vs " + playerO
+      .text playerX + ' vs ' + playerO
     playerX.setup -> playerO.setup -> next()
 
   teardown = ->
