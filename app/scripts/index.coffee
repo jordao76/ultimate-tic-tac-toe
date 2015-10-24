@@ -6,14 +6,12 @@ $ = jQuery
 {showSpinner, hideSpinner} = require './spinner'
 require './highlight'
 
-UltimateTicTacToe::state = ->
-  {@a, @nextPlayer, @lastPlayedPosition, @depth}
-
 $ ->
 
   game = null
   playerX = null
   playerO = null
+  lastAction = null
   createPlayerX = -> humanPlayer()
   createPlayerO = -> computerPlayer()
 
@@ -81,6 +79,7 @@ $ ->
         .text playerText()
         .highlight()
       game = game.play [i, j]
+      lastAction = [i, j]
       next()
     setup: (done) ->
       bus.setup ->
@@ -90,7 +89,7 @@ $ ->
       return if checkGameOver()
       playable()
       showSpinner()
-      bus.postMessage command: 'play', args: game.state()
+      bus.postMessage command: 'play', args: {lastAction}
     teardown: -> bus.teardown()
     toString: -> bus.toString()
 
@@ -98,7 +97,7 @@ $ ->
     worker = new Worker 'scripts/minimax-worker.min.js'
     bus =
       setup: (done) ->
-        worker.postMessage command: 'setup', args: depth
+        worker.postMessage command: 'setup', args: {depth}
         done()
       postMessage: (m) -> worker.postMessage m
       onmessage: (f) -> worker.onmessage = (e) -> f e.data
@@ -108,7 +107,7 @@ $ ->
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
-    parseId = (text) ->
+    parseAction = (text) ->
       match = text.match /(\d),(\d)/
       [(int match[1]), (int match[2])]
     setup: (done) -> done()
@@ -120,13 +119,16 @@ $ ->
         .on 'click', ->
           $tile = $ this
           $tile.text playerText()
-          game = game.play parseId $tile.get(0).id
+          action = parseAction $tile.get(0).id
+          game = game.play action
+          lastAction = action
           next()
     toString: -> "human"
 
   setup = ->
     teardown()
     game = new UltimateTicTacToe
+    lastAction = null
     [playerX, playerO] = [createPlayerX(), createPlayerO()]
     # swap for next time
     [createPlayerX, createPlayerO] = [createPlayerO, createPlayerX]
