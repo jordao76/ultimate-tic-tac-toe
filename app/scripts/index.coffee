@@ -17,8 +17,12 @@ $ ->
   playerX = null
   playerO = null
   lastAction = null
-  createPlayerX = -> humanPlayer()
-  createPlayerO = -> computerPlayer()
+  createPlayerX = null
+  createPlayerO = null
+  setupPlayerFactories = ->
+    createPlayerX = -> humanPlayer()
+    createPlayerO = -> computerPlayer()
+  setupPlayerFactories()
 
   # player :: {
   #   setup : (done: ->) ->
@@ -113,17 +117,19 @@ $ ->
 
   RTC.greet()
   RTC.ondatachannelopen = ->
-    # remote channel open
-    if RTC.I_am_a_host
+    if RTC.isHost
       createPlayerX = -> humanPlayer()
       createPlayerO = -> remotePlayer()
     else
       createPlayerX = -> remotePlayer()
       createPlayerO = -> humanPlayer()
     setup()
+  RTC.ondisconnected = ->
+    setupPlayerFactories()
+    setup()
 
   remotePlayer = ->
-    newGame = -> RTC.send_message "new"
+    newGame = -> RTC.send "new"
     ($ '#btn-new-game').on 'click', newGame
     RTC.onmessage = (data) ->
       if data is "new" then setup() else playAction data
@@ -132,7 +138,7 @@ $ ->
       unless checkGameOver()
         playable()
         showSpinner()
-      RTC.send_message lastAction if lastAction?
+      RTC.send lastAction if lastAction?
     teardown: -> ($ '#btn-new-game').off 'click', newGame
     toString: -> 'remote'
 
