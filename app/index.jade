@@ -34,7 +34,7 @@ html(lang='en')
       .row
         #spinner.col-xs-3
         #players.col-xs-6
-          .btn-group
+          .btn-group.dropup
             #btn-player-x.button.btn.dropdown-toggle.btn-success(data-toggle='dropdown')
               | human
             ul.dropdown-menu
@@ -44,7 +44,7 @@ html(lang='en')
               li: a.player(data-player-for='x') smart AI
               li: a.player(data-player-for='x') super AI
           | &nbsp;vs&nbsp;
-          .btn-group
+          .btn-group.dropup
             #btn-player-o.button.btn.dropdown-toggle.btn-danger(data-toggle='dropdown')
               | smart AI
             ul.dropdown-menu
@@ -57,7 +57,7 @@ html(lang='en')
           #btn-new-game.button.btn.btn-default New game
 
       #info-container.row
-        #info.alert.alert-info Draw!
+        #info.alert.alert-info
 
       .row
         #credit.col-xs-12

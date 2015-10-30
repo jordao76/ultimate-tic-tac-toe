@@ -6,10 +6,6 @@ header {
   height: 10rem;
   padding-top: 10px;
 }
-#info-container {
-  margin: 0 auto;
-  width: 540px;
-}
 #ultimate-tic-tac-toe {
   cursor: default;
   margin: 0 auto;
@@ -76,6 +72,10 @@ header {
 }
 #spinner {
   height: 60px;
+}
+#info {
+  font-size: 2rem;
+  font-weight: bold;
 }
 #credit {
   text-align: right;
