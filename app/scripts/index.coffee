@@ -185,12 +185,11 @@ $ ->
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
       .text ''
+    ($ '#info-container').hide()
 
   $ '#btn-new-game'
     .on 'click', ->
-      ($ '#info-container').hide()
       swapPlayers()
       setup()
 
-  ($ '#info-container').hide()
   setup()
