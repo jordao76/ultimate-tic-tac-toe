@@ -6,6 +6,10 @@ header {
   height: 10rem;
   padding-top: 10px;
 }
+#info-container {
+  margin: 0 auto;
+  width: 540px;
+}
 #ultimate-tic-tac-toe {
   cursor: default;
   margin: 0 auto;
@@ -61,7 +65,7 @@ header {
 .o-won-board {
   background-color: rgba(250, 0, 0, 0.5);
 }
-#info {
+#players {
   padding-top: 10px;
   text-align: center;
   font-size: 2rem;

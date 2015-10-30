@@ -71,14 +71,9 @@ class Guest
 
 module.exports = {Host, Guest}
 
-# "console" API
-# with firebase
+# WebRTC with Firebase as a signaling service
 
 RTC =
-
-  greet: ->
-    console.log 'To play with a remote peer, start a match with %cRTC.host()',
-      'background: #222; color: #bada55'
 
   host: ->
     @isHost = yes

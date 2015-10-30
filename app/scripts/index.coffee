@@ -9,33 +9,11 @@ $ = jQuery
 require './highlight'
 
 {RTC} = require './web-rtc'
-window.RTC = RTC
 
 $ ->
 
   game = null
-  playerX = null
-  playerO = null
   lastAction = null
-  createPlayerX = null
-  createPlayerO = null
-  setupPlayerFactories = ->
-    createPlayerX = -> humanPlayer()
-    createPlayerO = -> computerPlayer()
-  setupPlayerFactories()
-
-  # player :: {
-  #   setup : (done: ->) ->
-  #   teardown : ->
-  #   play : ->
-  #   toString : -> Str
-  # }
-
-  next = ->
-    unplayable()
-    markWins()
-    player = if game.nextPlayer is X then playerX else playerO
-    player.play()
 
   playable = ->
     className =
@@ -70,6 +48,8 @@ $ ->
         when game.isWin(X) then 'X Wins!'
         when game.isWin(O) then 'O Wins!'
         else 'Draw!'
+    $ '#info-container'
+      .show()
     yes
 
   playerText = -> (decode game.nextPlayer).toLowerCase()
@@ -83,6 +63,56 @@ $ ->
     game = game.play action
     lastAction = action
     next()
+
+  # player :: {
+  #   setup : (done: ->) ->
+  #   teardown : ->
+  #   play : ->
+  # }
+
+  playerX = null
+  playerO = null
+
+  next = ->
+    unplayable()
+    markWins()
+    player = if game.nextPlayer is X then playerX else playerO
+    player.play()
+
+  players =
+    human: -> humanPlayer()
+    peer: ->
+      RTC.host()
+      remotePlayer()
+    'dumb AI': -> computerPlayer 1
+    'so-so AI': -> computerPlayer 2
+    'smart AI': -> computerPlayer 3
+    'super AI': -> computerPlayer 4
+
+  createPlayerX = ->
+    playerName = ($ '#btn-player-x').text()
+    players[playerName]()
+  createPlayerO = ->
+    playerName = ($ '#btn-player-o').text()
+    players[playerName]()
+
+  swapPlayers = ->
+    $x = $ '#btn-player-x'
+    $o = $ '#btn-player-o'
+    tmp = $x.html()
+    $x.html $o.html()
+    $o.html tmp
+
+  $ '.player'
+    .on 'click', ->
+      $player = $ this
+      playerFor = $player.data 'player-for'
+      $btn = $ "#btn-player-#{playerFor}"
+      playerName = $player.text()
+      currentPlayerName = $btn.text()
+      if currentPlayerName isnt playerName
+        $btn.text playerName
+        setup()
 
   humanPlayer = ->
     int = (s) -> parseInt s, 10
@@ -99,7 +129,6 @@ $ ->
           $tile = $ this
           action = parseAction $tile.get(0).id
           playAction action
-    toString: -> "human"
 
   computerPlayer = (depth = 3) ->
     worker = new Worker 'scripts/minimax-worker.min.js'
@@ -113,9 +142,7 @@ $ ->
       showSpinner()
       worker.postMessage command: 'play', args: {lastAction}
     teardown: -> worker.terminate()
-    toString: -> 'computer'
 
-  RTC.greet()
   RTC.ondatachannelopen = ->
     if RTC.isHost
       createPlayerX = -> humanPlayer()
@@ -125,8 +152,7 @@ $ ->
       createPlayerO = -> humanPlayer()
     setup()
   RTC.ondisconnected = ->
-    setupPlayerFactories()
-    setup()
+    #TODO
 
   remotePlayer = ->
     newGame = -> RTC.send "new"
@@ -140,17 +166,12 @@ $ ->
         showSpinner()
       RTC.send lastAction if lastAction?
     teardown: -> ($ '#btn-new-game').off 'click', newGame
-    toString: -> 'remote'
 
   setup = ->
     teardown()
     game = new UltimateTicTacToe
     lastAction = null
     [playerX, playerO] = [createPlayerX(), createPlayerO()]
-    # swap for next time
-    [createPlayerX, createPlayerO] = [createPlayerO, createPlayerX]
-    $ '#info'
-      .text playerX + ' vs ' + playerO
     playerX.setup -> playerO.setup -> next()
 
   teardown = ->
@@ -166,6 +187,10 @@ $ ->
       .text ''
 
   $ '#btn-new-game'
-    .on 'click', setup
+    .on 'click', ->
+      ($ '#info-container').hide()
+      swapPlayers()
+      setup()
 
+  ($ '#info-container').hide()
   setup()
