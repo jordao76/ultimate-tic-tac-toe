@@ -39,20 +39,16 @@ html(lang='en')
               | human
             ul.dropdown-menu
               li: a.player(data-player-for='x') human
-              li: a.player(data-player-for='x') dumb AI
-              li: a.player(data-player-for='x') so-so AI
+              li: a.player(data-player-for='x') starter AI
               li: a.player(data-player-for='x') smart AI
-              li: a.player(data-player-for='x') super AI
           | &nbsp;vs&nbsp;
           .btn-group.dropup
             #btn-player-o.button.btn.dropdown-toggle.btn-danger(data-toggle='dropdown')
               | smart AI
             ul.dropdown-menu
               li: a.player(data-player-for='o') human
-              li: a.player(data-player-for='o') dumb AI
-              li: a.player(data-player-for='o') so-so AI
+              li: a.player(data-player-for='o') starter AI
               li: a.player(data-player-for='o') smart AI
-              li: a.player(data-player-for='o') super AI
         #commands.col-xs-3
           #btn-new-game.button.btn.btn-default New game
 

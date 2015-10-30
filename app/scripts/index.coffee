@@ -84,10 +84,8 @@ $ ->
     peer: ->
       RTC.host()
       remotePlayer()
-    'dumb AI': -> computerPlayer 1
-    'so-so AI': -> computerPlayer 2
+    'starter AI': -> computerPlayer 1
     'smart AI': -> computerPlayer 3
-    'super AI': -> computerPlayer 4
 
   createPlayerX = ->
     playerName = ($ '#btn-player-x').text()
