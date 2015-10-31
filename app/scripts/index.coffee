@@ -169,6 +169,7 @@ $ ->
   setup = ->
     teardown()
     game = new UltimateTicTacToe
+    game.lastPlayedPosition = null
     lastAction = null
     [playerX, playerO] = [createPlayerX(), createPlayerO()]
     playerX.setup -> playerO.setup -> next()
