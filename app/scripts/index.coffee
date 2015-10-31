@@ -43,13 +43,14 @@ $ ->
 
   checkGameOver = ->
     return no unless game.isTerminal()
-    $ '#info'
-      .text switch
-        when game.isWin(X) then 'X Wins!'
-        when game.isWin(O) then 'O Wins!'
-        else 'Draw!'
-    $ '#info-container'
-      .show()
+    endText = switch
+      when game.isWin(X) then 'X Wins!'
+      when game.isWin(O) then 'O Wins!'
+      else 'Draw!'
+    $ '#end-text'
+      .text endText
+    $ '#modal-game-over'
+      .modal('show')
     yes
 
   playerText = -> (decode game.nextPlayer).toLowerCase()

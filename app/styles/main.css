@@ -73,10 +73,13 @@ header {
 #spinner {
   height: 60px;
 }
-#info {
-  font-size: 2rem;
-  font-weight: bold;
-}
 #credit {
   text-align: right;
+}
+#end-text {
+  text-align: center;
+}
+#modal {
+  color: #31708f;
+  background-color: #d9edf7;
 }
