@@ -75,6 +75,11 @@ module.exports = {Host, Guest}
 
 RTC =
 
+  greet: ->
+    window.RTC = RTC
+    console.log 'To play with a remote peer, start a match with %cRTC.host()',
+      'background: #222; color: #bada55'
+
   host: ->
     @isHost = yes
     host = new Host

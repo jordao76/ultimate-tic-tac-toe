@@ -35,7 +35,7 @@ html(lang='en')
         #spinner.col-xs-3
         #players.col-xs-6
           .btn-group.dropup
-            #btn-player-x.button.btn.dropdown-toggle.btn-success(data-toggle='dropdown')
+            button#btn-player-x.button.btn.dropdown-toggle.btn-success(data-toggle='dropdown')
               | human
             ul.dropdown-menu
               li: a.player(data-player-for='x') human
@@ -43,7 +43,7 @@ html(lang='en')
               li: a.player(data-player-for='x') smart AI
           | &nbsp;vs&nbsp;
           .btn-group.dropup
-            #btn-player-o.button.btn.dropdown-toggle.btn-danger(data-toggle='dropdown')
+            button#btn-player-o.button.btn.dropdown-toggle.btn-danger(data-toggle='dropdown')
               | smart AI
             ul.dropdown-menu
               li: a.player(data-player-for='o') human

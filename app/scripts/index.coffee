@@ -82,9 +82,7 @@ $ ->
 
   players =
     human: -> humanPlayer()
-    peer: ->
-      RTC.host()
-      remotePlayer()
+    peer: -> remotePlayer()
     'starter AI': -> computerPlayer 1
     'smart AI': -> computerPlayer 3
 
@@ -142,29 +140,39 @@ $ ->
       worker.postMessage command: 'play', args: {lastAction}
     teardown: -> worker.terminate()
 
+  $.fn.enable = (v = yes) -> ($ this).prop 'disabled', not v
+  RTC.greet()
   RTC.ondatachannelopen = ->
-    if RTC.isHost
-      createPlayerX = -> humanPlayer()
-      createPlayerO = -> remotePlayer()
-    else
-      createPlayerX = -> remotePlayer()
-      createPlayerO = -> humanPlayer()
+    [xPlayer, oPlayer] =
+      if RTC.isHost then ['human', 'peer'] else ['peer', 'human']
+    $ '#btn-player-x'
+      .text xPlayer
+      .enable no
+    $ '#btn-player-o'
+      .text oPlayer
+      .enable no
     setup()
   RTC.ondisconnected = ->
-    #TODO
+    $ '#btn-player-x'
+      .text 'human'
+      .enable()
+    $ '#btn-player-o'
+      .text 'smart AI'
+      .enable()
+    setup()
 
   remotePlayer = ->
-    newGame = -> RTC.send "new"
-    ($ '#btn-new-game').on 'click', newGame
+    sendNew = -> RTC.send "new"
+    ($ '#btn-new-game').on 'click', sendNew
     RTC.onmessage = (data) ->
-      if data is "new" then setup() else playAction data
+      if data is "new" then newGame() else playAction data
     setup: (done) -> done()
     play: ->
       unless checkGameOver()
         playable()
         showSpinner()
       RTC.send lastAction if lastAction?
-    teardown: -> ($ '#btn-new-game').off 'click', newGame
+    teardown: -> ($ '#btn-new-game').off 'click', sendNew
 
   setup = ->
     teardown()
@@ -186,9 +194,11 @@ $ ->
       .removeClass 'o-won-tile'
       .text ''
 
+  newGame = ->
+    swapPlayers()
+    setup()
+
   $ '#btn-new-game'
-    .on 'click', ->
-      swapPlayers()
-      setup()
+    .on 'click', newGame
 
   setup()
