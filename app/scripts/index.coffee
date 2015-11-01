@@ -98,9 +98,9 @@ $ ->
   swapPlayers = ->
     $x = $ '#btn-player-x'
     $o = $ '#btn-player-o'
-    tmp = $x.html()
-    $x.html $o.html()
-    $o.html tmp
+    tmp = $x.text()
+    $x.text $o.text()
+    $o.text tmp
 
   $ '.player'
     .on 'click', ->
@@ -169,7 +169,7 @@ $ ->
   setup = ->
     teardown()
     game = new UltimateTicTacToe
-    game.lastPlayedPosition = null
+    game.lastPlayedPosition = null # start with the full board open
     lastAction = null
     [playerX, playerO] = [createPlayerX(), createPlayerO()]
     playerX.setup -> playerO.setup -> next()
@@ -185,7 +185,6 @@ $ ->
       .removeClass 'x-won-tile'
       .removeClass 'o-won-tile'
       .text ''
-    ($ '#info-container').hide()
 
   $ '#btn-new-game'
     .on 'click', ->
