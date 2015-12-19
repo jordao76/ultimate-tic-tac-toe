@@ -42,12 +42,9 @@ gulp.task 'jade', ->
     .pipe gulp.dest '.tmp'
 
 gulp.task 'html', ['jade'], ->
-  assets = $.useref.assets searchPath: 'app'
   gulp.src '.tmp/*.html'
-    .pipe assets
+    .pipe $.useref searchPath: 'app'
     .pipe $.if '*.css', $.csso()
-    .pipe assets.restore()
-    .pipe $.useref()
     .pipe $.if '*.html', $.minifyHtml conditionals: true
     .pipe gulp.dest 'dist'
 
