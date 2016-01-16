@@ -128,7 +128,7 @@ $ ->
           playAction action
 
   computerPlayer = (depth = 3) ->
-    worker = new Worker 'scripts/minimax-worker.min.js'
+    worker = new Worker 'src/minimax-worker.min.js'
     setup: (done) ->
       worker.onmessage = (e) -> playAction e.data.action
       worker.postMessage command: 'setup', args: {depth}
