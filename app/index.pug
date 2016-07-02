@@ -25,11 +25,11 @@ html(lang='en')
       each urow in [0,1,2]
         .board-row.row
           each ucolumn in [0,1,2]
-            .tic-tac-toe.container.col-xs-4(id = "#{urow*3 + ucolumn}")
+            .tic-tac-toe.container.col-xs-4(id = urow*3 + ucolumn)
               each row in [0,1,2]
                 .ttt-row.row
                   each column in [0,1,2]
-                    .tile.col-xs-4(id = "#{urow*3 + ucolumn},#{row*3 + column}")
+                    .tile.col-xs-4(id = (urow*3 + ucolumn) + ',' + (row*3 + column))
 
       .row
         #spinner.col-xs-3

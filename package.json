@@ -6,12 +6,12 @@
   "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "aye-aye": "^0.1.2"
+    "aye-aye": "^0.1.6"
   },
   "devDependencies": {
-    "bower": "^1.7.1",
+    "bower": "^1.7.9",
     "coffee-script": "^1.10.0",
-    "gulp": "^3.9.0",
-    "web-build-tasks": "0.0.1"
+    "gulp": "^3.9.1",
+    "web-build-tasks": "0.0.3"
   }
 }
