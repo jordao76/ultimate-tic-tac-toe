@@ -3,7 +3,7 @@
 gulp = require 'gulp'
 webBuildTasks = require 'web-build-tasks'
 
-rootGlobs = ['./app/src/index.coffee', './app/src/minimax-worker.coffee']
+rootGlobs = ['./app/src/index.coffee', './app/src/ai-worker.coffee']
 
 cdnEntries = [
   {

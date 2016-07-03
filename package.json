@@ -6,7 +6,7 @@
   "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "aye-aye": "^0.1.6"
+    "aye-aye": "^0.1.7"
   },
   "devDependencies": {
     "bower": "^1.7.9",

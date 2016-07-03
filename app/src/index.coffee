@@ -83,8 +83,8 @@ $ ->
   players =
     human: -> humanPlayer()
     peer: -> remotePlayer()
-    'starter AI': -> computerPlayer 1
-    'smart AI': -> computerPlayer 3
+    'starter AI': -> computerPlayer 'monte-carlo', 500
+    'smart AI': -> computerPlayer 'minimax', 3
 
   createPlayerX = ->
     playerName = ($ '#btn-player-x').text()
@@ -127,11 +127,11 @@ $ ->
           action = parseAction $tile.get(0).id
           playAction action
 
-  computerPlayer = (depth = 3) ->
-    worker = new Worker 'src/minimax-worker.min.js'
+  computerPlayer = (agentName = 'minimax', depth = 3) ->
+    worker = new Worker 'src/ai-worker.min.js'
     setup: (done) ->
       worker.onmessage = (e) -> playAction e.data.action
-      worker.postMessage command: 'setup', args: {depth}
+      worker.postMessage command: 'setup', args: {agentName, depth}
       done()
     play: ->
       return if checkGameOver()

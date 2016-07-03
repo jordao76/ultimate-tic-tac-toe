@@ -1,4 +1,7 @@
+# coffeelint: disable=max_line_length
+
 {MinimaxAgent} = require 'aye-aye'
+{MonteCarloAgent} = require 'aye-aye/lib/monte-carlo'
 {UltimateTicTacToe} = require 'aye-aye/lib/games/ultimate-tic-tac-toe'
 
 player = null
@@ -28,8 +31,9 @@ self.onmessage = (e) ->
   switch e.data.command
     when 'setup'
       game = new UltimateTicTacToe
-      depth = e.data.args.depth
-      player = computerPlayer depth
+      agentName = e.data.args.agentName ? 'minimax'
+      depth = e.data.args.depth ? 3
+      player = computerPlayer agentName, depth
     when 'play'
       lastAction = e.data.args.lastAction
       game = game.play lastAction if lastAction?
@@ -37,8 +41,8 @@ self.onmessage = (e) ->
       game = game.play action
       self.postMessage {action}
 
-computerPlayer = (depth = 3) ->
-  agent = new MinimaxAgent depth
+computerPlayer = (agentName = 'minimax', depth = 3) ->
+  agent = if agentName is 'minimax' then new MinimaxAgent depth else new MonteCarloAgent timeFrameMs: depth
   play: (game) ->
     return if game.isTerminal()
     agent.nextAction game
