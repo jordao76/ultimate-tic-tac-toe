@@ -13,5 +13,8 @@
     "coffee-script": "^1.10.0",
     "gulp": "^3.9.1",
     "web-build-tasks": "0.0.3"
+  },
+  "overrides": {
+    "graceful-fs": "^4.2.11"
   }
 }
