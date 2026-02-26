@@ -6,40 +6,48 @@ header {
   height: 10rem;
   padding-top: 10px;
 }
+
+/* ── Board layout ────────────────────────────────────────────── */
 #ultimate-tic-tac-toe {
   cursor: default;
   margin: 0 auto;
   width: 540px;
 }
 .board-row {
+  display: flex;
   height: 180px;
 }
 .board-row:nth-child(1), .board-row:nth-child(2) {
   box-shadow: 0px 3px black;
 }
 .tic-tac-toe {
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
   width: 180px;
-  height: 100%;
+  height: 180px;
 }
 .tic-tac-toe:nth-child(1), .tic-tac-toe:nth-child(2) {
   box-shadow: 3px 0px black;
 }
 .ttt-row {
+  display: flex;
   height: 60px;
 }
 .ttt-row:nth-child(1), .ttt-row:nth-child(2) {
   box-shadow: 0px 1px black;
 }
 .tile {
-  height: 6rem;
-  width: 6rem;
-  font-size: 4rem;
+  width: 60px;
+  height: 60px;
+  font-size: 2.5rem;
+  line-height: 60px;
   text-align: center;
 }
 .tile:nth-child(1), .tile:nth-child(2) {
   box-shadow: 1px 0px black;
 }
+
+/* ── Tile states ─────────────────────────────────────────────── */
 .x-playable-tile {
   background-color: rgba(150, 250, 150, 0.5);
 }
@@ -48,6 +56,7 @@ header {
 }
 .human-playable-tile:hover {
   background-color: rgba(200, 200, 0, 0.5);
+  cursor: pointer;
 }
 .x-won-tile {
   background-color: rgba(0, 200, 0, 0.5);
@@ -61,25 +70,78 @@ header {
 .o-won-board {
   background-color: rgba(250, 0, 0, 0.5);
 }
-#players {
-  padding-top: 10px;
-  text-align: center;
-  font-size: 2rem;
-}
-#commands {
-  padding-top: 10px;
-  text-align: right;
+
+/* ── Controls row ────────────────────────────────────────────── */
+.controls-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  margin-top: 10px;
+  height: 60px;
 }
 #spinner {
   height: 60px;
 }
+#players {
+  text-align: center;
+  font-size: 1.25rem;
+}
+.player-select {
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 2px solid #ccc;
+  cursor: pointer;
+}
+.player-select-x {
+  border-color: #5cb85c;
+  color: #3d7a3d;
+}
+.player-select-o {
+  border-color: #d9534f;
+  color: #8b1a17;
+}
+#commands {
+  text-align: right;
+}
+#btn-new-game {
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+#btn-new-game:hover {
+  background: #e8e8e8;
+}
+
+/* ── Credit ──────────────────────────────────────────────────── */
+.credit-row {
+  margin-top: 8px;
+}
 #credit {
   text-align: right;
 }
-#end-text {
+
+/* ── Game-over dialog ────────────────────────────────────────── */
+#modal-game-over {
+  border: none;
+  border-radius: 8px;
+  padding: 2rem 3rem;
   text-align: center;
-}
-#modal {
   color: #31708f;
   background-color: #d9edf7;
+}
+#modal-game-over::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+#end-text {
+  margin: 0;
+}
+
+/* ── Highlight animation ─────────────────────────────────────── */
+@keyframes highlight-fade {
+  from { opacity: 0.7; }
+  to   { opacity: 0; }
 }

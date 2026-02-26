@@ -1,4 +1,3 @@
-import { Modal } from 'bootstrap';
 import { X, O, decode } from 'aye-aye/lib/games/bin-tic-tac-toe';
 import { UltimateTicTacToe } from 'aye-aye/lib/games/ultimate-tic-tac-toe';
 import { showSpinner, hideSpinner } from './spinner';
@@ -9,18 +8,18 @@ function buildBoard() {
   const root = document.getElementById('ultimate-tic-tac-toe');
   for (let urow = 0; urow < 3; urow++) {
     const boardRow = document.createElement('div');
-    boardRow.className = 'board-row row';
+    boardRow.className = 'board-row';
     for (let ucol = 0; ucol < 3; ucol++) {
       const board = urow * 3 + ucol;
       const ttt = document.createElement('div');
-      ttt.className = 'tic-tac-toe container col-xs-4';
+      ttt.className = 'tic-tac-toe';
       ttt.id = board;
       for (let row = 0; row < 3; row++) {
         const tttRow = document.createElement('div');
-        tttRow.className = 'ttt-row row';
+        tttRow.className = 'ttt-row';
         for (let col = 0; col < 3; col++) {
           const tile = document.createElement('div');
-          tile.className = 'tile col-xs-4';
+          tile.className = 'tile';
           tile.id = `${board},${row * 3 + col}`;
           tttRow.appendChild(tile);
         }
@@ -38,6 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let game = null;
   let lastAction = null;
   let humanClickController = null;
+
+  const selX = document.getElementById('select-player-x');
+  const selO = document.getElementById('select-player-o');
+  const dialog = document.getElementById('modal-game-over');
+
+  // Close dialog on click (allows dismissing the game-over screen)
+  dialog.addEventListener('click', () => dialog.close());
 
   function playable() {
     const className = game.nextPlayer === X ? 'x-playable-tile' : 'o-playable-tile';
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       game.isWin(O) ? 'O Wins!' :
       'Draw!';
     document.getElementById('end-text').textContent = endText;
-    Modal.getOrCreateInstance(document.getElementById('modal-game-over')).show();
+    dialog.showModal();
     return true;
   }
 
@@ -119,34 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
     'smart AI': () => computerPlayer('minimax', 3),
   };
 
-  function createPlayerX() {
-    return players[document.getElementById('btn-player-x').textContent.trim()]();
-  }
-  function createPlayerO() {
-    return players[document.getElementById('btn-player-o').textContent.trim()]();
-  }
+  function createPlayerX() { return players[selX.value](); }
+  function createPlayerO() { return players[selO.value](); }
 
   function swapPlayers() {
-    const btnX = document.getElementById('btn-player-x');
-    const btnO = document.getElementById('btn-player-o');
-    const tmp = btnX.textContent.trim();
-    btnX.textContent = btnO.textContent.trim();
-    btnO.textContent = tmp;
+    const tmp = selX.value;
+    selX.value = selO.value;
+    selO.value = tmp;
   }
 
-  for (const el of document.querySelectorAll('.player')) {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      const playerFor = el.dataset.playerFor;
-      const btn = document.getElementById(`btn-player-${playerFor}`);
-      const playerName = el.textContent;
-      const currentPlayerName = btn.textContent.trim();
-      if (currentPlayerName !== playerName) {
-        btn.textContent = playerName;
-        setup();
-      }
-    });
-  }
+  selX.addEventListener('change', setup);
+  selO.addEventListener('change', setup);
 
   function humanPlayer() {
     function parseAction(id) {
@@ -189,21 +178,17 @@ document.addEventListener('DOMContentLoaded', () => {
   RTC.greet();
   RTC.ondatachannelopen = () => {
     const [xPlayer, oPlayer] = RTC.isHost ? ['human', 'peer'] : ['peer', 'human'];
-    const btnX = document.getElementById('btn-player-x');
-    const btnO = document.getElementById('btn-player-o');
-    btnX.textContent = xPlayer;
-    btnX.disabled = true;
-    btnO.textContent = oPlayer;
-    btnO.disabled = true;
+    selX.value = xPlayer;
+    selX.disabled = true;
+    selO.value = oPlayer;
+    selO.disabled = true;
     setup();
   };
   RTC.ondisconnected = () => {
-    const btnX = document.getElementById('btn-player-x');
-    const btnO = document.getElementById('btn-player-o');
-    btnX.textContent = 'human';
-    btnX.disabled = false;
-    btnO.textContent = 'smart AI';
-    btnO.disabled = false;
+    selX.value = 'human';
+    selX.disabled = false;
+    selO.value = 'smart AI';
+    selO.disabled = false;
     setup();
   };
 
