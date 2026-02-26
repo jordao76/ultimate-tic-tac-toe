@@ -225,19 +225,52 @@ header {
 }
 
 /* ── Game-over dialog ────────────────────────────────────────── */
+@keyframes modal-appear {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
 #modal-game-over {
   border: none;
-  border-radius: 8px;
-  padding: 2rem 3rem;
+  border-radius: 16px;
+  padding: 2.5rem 3.5rem;
   text-align: center;
   color: var(--color-modal-text);
   background-color: var(--color-modal-bg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border-top: 5px solid var(--color-modal-accent, #31708f);
+  animation: modal-appear 0.25s ease;
+}
+#modal-game-over.x-win {
+  --color-modal-bg: #f0fdf0;
+  --color-modal-text: var(--color-x);
+  --color-modal-accent: var(--color-x-border);
+}
+#modal-game-over.o-win {
+  --color-modal-bg: #fdf0f0;
+  --color-modal-text: var(--color-o);
+  --color-modal-accent: var(--color-o-border);
 }
 #modal-game-over::backdrop {
   background: var(--color-modal-backdrop);
 }
 #end-text {
-  margin: 0;
+  margin: 0 0 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+#btn-play-again {
+  font-size: 1rem;
+  padding: 8px 28px;
+  border-radius: 24px;
+  border: 2px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+#btn-play-again:hover {
+  background: rgba(0, 0, 0, 0.07);
 }
 
 /* ── Highlight animation ─────────────────────────────────────── */

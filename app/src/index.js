@@ -88,8 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const selO = document.getElementById('select-player-o');
   const dialog = document.getElementById('modal-game-over');
 
-  // Close dialog on click (allows dismissing the game-over screen)
-  dialog.addEventListener('click', () => dialog.close());
+  // Close dialog on backdrop click
+  dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+
+  document.getElementById('btn-play-again').addEventListener('click', () => {
+    dialog.close();
+    newGame();
+  });
 
   function playable() {
     const className = game.nextPlayer === X ? 'x-playable-tile' : 'o-playable-tile';
@@ -134,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       game.isWin(O) ? 'O Wins!' :
       'Draw!';
     document.getElementById('end-text').textContent = endText;
+    dialog.className = game.isWin(X) ? 'x-win' : game.isWin(O) ? 'o-win' : '';
     dialog.showModal();
     return true;
   }
