@@ -1,9 +1,8 @@
-import $ from 'jquery';
 import { Modal } from 'bootstrap';
 import { X, O, decode } from 'aye-aye/lib/games/bin-tic-tac-toe';
 import { UltimateTicTacToe } from 'aye-aye/lib/games/ultimate-tic-tac-toe';
 import { showSpinner, hideSpinner } from './spinner';
-import './highlight';
+import { highlight } from './highlight';
 import { RTC } from './web-rtc';
 
 function buildBoard() {
@@ -33,26 +32,27 @@ function buildBoard() {
   }
 }
 
-$(() => {
+document.addEventListener('DOMContentLoaded', () => {
   buildBoard();
 
   let game = null;
   let lastAction = null;
+  let humanClickController = null;
 
   function playable() {
     const className = game.nextPlayer === X ? 'x-playable-tile' : 'o-playable-tile';
     for (const [i, j] of game.possibleActions()) {
-      $(`#${i}\\,${j}`).addClass(className);
+      document.getElementById(`${i},${j}`).classList.add(className);
     }
     return className;
   }
 
   function unplayable() {
-    $('.tile')
-      .removeClass('x-playable-tile')
-      .removeClass('o-playable-tile')
-      .removeClass('human-playable-tile')
-      .off('click');
+    humanClickController?.abort();
+    humanClickController = null;
+    for (const tile of document.querySelectorAll('.tile')) {
+      tile.classList.remove('x-playable-tile', 'o-playable-tile', 'human-playable-tile');
+    }
   }
 
   function markWins() {
@@ -61,11 +61,11 @@ $(() => {
       for (const j of game.winOn(i)) {
         wonBy = game.at(i, j);
         const wonClass = wonBy === X ? 'x-won-tile' : 'o-won-tile';
-        $(`#${i}\\,${j}`).addClass(wonClass);
+        document.getElementById(`${i},${j}`).classList.add(wonClass);
       }
       if (wonBy != null) {
         const wonClass = wonBy === X ? 'x-won-board' : 'o-won-board';
-        $(`#${i}`).addClass(wonClass);
+        document.getElementById(String(i)).classList.add(wonClass);
       }
     }
   }
@@ -76,7 +76,7 @@ $(() => {
       game.isWin(X) ? 'X Wins!' :
       game.isWin(O) ? 'O Wins!' :
       'Draw!';
-    $('#end-text').text(endText);
+    document.getElementById('end-text').textContent = endText;
     Modal.getOrCreateInstance(document.getElementById('modal-game-over')).show();
     return true;
   }
@@ -88,7 +88,9 @@ $(() => {
   function playAction(action) {
     const [i, j] = action;
     hideSpinner();
-    $(`#${i}\\,${j}`).text(playerText()).highlight();
+    const tile = document.getElementById(`${i},${j}`);
+    tile.textContent = playerText();
+    highlight(tile);
     game = game.play(action);
     lastAction = action;
     next();
@@ -118,48 +120,50 @@ $(() => {
   };
 
   function createPlayerX() {
-    return players[$('#btn-player-x').text()]();
+    return players[document.getElementById('btn-player-x').textContent.trim()]();
   }
   function createPlayerO() {
-    return players[$('#btn-player-o').text()]();
+    return players[document.getElementById('btn-player-o').textContent.trim()]();
   }
 
   function swapPlayers() {
-    const $x = $('#btn-player-x');
-    const $o = $('#btn-player-o');
-    const tmp = $x.text().trim();
-    $x.text($o.text().trim());
-    $o.text(tmp);
+    const btnX = document.getElementById('btn-player-x');
+    const btnO = document.getElementById('btn-player-o');
+    const tmp = btnX.textContent.trim();
+    btnX.textContent = btnO.textContent.trim();
+    btnO.textContent = tmp;
   }
 
-  $('.player').on('click', function () {
-    const $player = $(this);
-    const playerFor = $player.data('player-for');
-    const $btn = $(`#btn-player-${playerFor}`);
-    const playerName = $player.text();
-    const currentPlayerName = $btn.text().trim();
-    if (currentPlayerName !== playerName) {
-      $btn.text(playerName);
-      setup();
-    }
-  });
+  for (const el of document.querySelectorAll('.player')) {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      const playerFor = el.dataset.playerFor;
+      const btn = document.getElementById(`btn-player-${playerFor}`);
+      const playerName = el.textContent;
+      const currentPlayerName = btn.textContent.trim();
+      if (currentPlayerName !== playerName) {
+        btn.textContent = playerName;
+        setup();
+      }
+    });
+  }
 
   function humanPlayer() {
-    function parseAction(text) {
-      const match = text.match(/(\d),(\d)/);
-      return [parseInt(match[1], 10), parseInt(match[2], 10)];
+    function parseAction(id) {
+      const [i, j] = id.split(',').map(Number);
+      return [i, j];
     }
     return {
       setup(done) { done(); },
       play() {
         if (checkGameOver()) return;
         const playableClassName = playable();
-        $(`.${playableClassName}`)
-          .addClass('human-playable-tile')
-          .on('click', function () {
-            const action = parseAction($(this).get(0).id);
-            playAction(action);
-          });
+        humanClickController = new AbortController();
+        const { signal } = humanClickController;
+        for (const tile of document.querySelectorAll(`.${playableClassName}`)) {
+          tile.classList.add('human-playable-tile');
+          tile.addEventListener('click', () => playAction(parseAction(tile.id)), { signal });
+        }
       },
     };
   }
@@ -182,24 +186,31 @@ $(() => {
     };
   }
 
-  $.fn.enable = function (v = true) { return $(this).prop('disabled', !v); };
-
   RTC.greet();
   RTC.ondatachannelopen = () => {
     const [xPlayer, oPlayer] = RTC.isHost ? ['human', 'peer'] : ['peer', 'human'];
-    $('#btn-player-x').text(xPlayer).enable(false);
-    $('#btn-player-o').text(oPlayer).enable(false);
+    const btnX = document.getElementById('btn-player-x');
+    const btnO = document.getElementById('btn-player-o');
+    btnX.textContent = xPlayer;
+    btnX.disabled = true;
+    btnO.textContent = oPlayer;
+    btnO.disabled = true;
     setup();
   };
   RTC.ondisconnected = () => {
-    $('#btn-player-x').text('human').enable();
-    $('#btn-player-o').text('smart AI').enable();
+    const btnX = document.getElementById('btn-player-x');
+    const btnO = document.getElementById('btn-player-o');
+    btnX.textContent = 'human';
+    btnX.disabled = false;
+    btnO.textContent = 'smart AI';
+    btnO.disabled = false;
     setup();
   };
 
   function remotePlayer() {
     const sendNew = () => RTC.send('new');
-    $('#btn-new-game').on('click', sendNew);
+    const btnNewGame = document.getElementById('btn-new-game');
+    btnNewGame.addEventListener('click', sendNew);
     RTC.onmessage = (data) => {
       if (data === 'new') newGame(); else playAction(data);
     };
@@ -212,7 +223,7 @@ $(() => {
         }
         if (lastAction != null) RTC.send(lastAction);
       },
-      teardown() { $('#btn-new-game').off('click', sendNew); },
+      teardown() { btnNewGame.removeEventListener('click', sendNew); },
     };
   }
 
@@ -229,8 +240,13 @@ $(() => {
     playerX?.teardown?.();
     playerO?.teardown?.();
     hideSpinner();
-    $('.tic-tac-toe').removeClass('x-won-board').removeClass('o-won-board');
-    $('.tile').removeClass('x-won-tile').removeClass('o-won-tile').text('');
+    for (const el of document.querySelectorAll('.tic-tac-toe')) {
+      el.classList.remove('x-won-board', 'o-won-board');
+    }
+    for (const tile of document.querySelectorAll('.tile')) {
+      tile.classList.remove('x-won-tile', 'o-won-tile');
+      tile.textContent = '';
+    }
   }
 
   function newGame() {
@@ -238,7 +254,7 @@ $(() => {
     setup();
   }
 
-  $('#btn-new-game').on('click', newGame);
+  document.getElementById('btn-new-game').addEventListener('click', newGame);
 
   setup();
 });
