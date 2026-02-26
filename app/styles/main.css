@@ -85,9 +85,14 @@ header {
 .tile {
   width: var(--tile-size);
   height: var(--tile-size);
-  font-size: calc(var(--tile-size) * 0.667);
-  line-height: var(--tile-size);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tile > svg {
+  width: 62%;
+  height: 62%;
+  flex-shrink: 0;
 }
 .tile:nth-child(1), .tile:nth-child(2) {
   box-shadow: 1px 0px var(--color-grid-minor);
