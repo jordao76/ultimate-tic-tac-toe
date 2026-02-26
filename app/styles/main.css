@@ -67,10 +67,24 @@ header {
   box-shadow: 0px 3px var(--color-grid-major);
 }
 .tic-tac-toe {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: var(--sub-board-size);
   height: var(--sub-board-size);
+}
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.board-overlay > svg {
+  width: 72%;
+  height: 72%;
 }
 .tic-tac-toe:nth-child(1), .tic-tac-toe:nth-child(2) {
   box-shadow: 3px 0px var(--color-grid-major);
