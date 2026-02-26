@@ -7,7 +7,6 @@
     <title>Ultimate Tic Tac Toe</title>
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css" />
-    <link href="/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
@@ -22,24 +21,24 @@
         <div id="spinner" class="col-xs-3"></div>
         <div id="players" class="col-xs-6">
           <div class="btn-group dropup">
-            <button id="btn-player-x" class="button btn dropdown-toggle btn-success" data-toggle="dropdown">
+            <button id="btn-player-x" class="button btn dropdown-toggle btn-success" data-bs-toggle="dropdown">
               human
             </button>
             <ul class="dropdown-menu">
-              <li><a class="player" data-player-for="x">human</a></li>
-              <li><a class="player" data-player-for="x">starter AI</a></li>
-              <li><a class="player" data-player-for="x">smart AI</a></li>
+              <li><a class="player dropdown-item" data-player-for="x" href="#">human</a></li>
+              <li><a class="player dropdown-item" data-player-for="x" href="#">starter AI</a></li>
+              <li><a class="player dropdown-item" data-player-for="x" href="#">smart AI</a></li>
             </ul>
           </div>
           &nbsp;vs&nbsp;
           <div class="btn-group dropup">
-            <button id="btn-player-o" class="button btn dropdown-toggle btn-danger" data-toggle="dropdown">
+            <button id="btn-player-o" class="button btn dropdown-toggle btn-danger" data-bs-toggle="dropdown">
               smart AI
             </button>
             <ul class="dropdown-menu">
-              <li><a class="player" data-player-for="o">human</a></li>
-              <li><a class="player" data-player-for="o">starter AI</a></li>
-              <li><a class="player" data-player-for="o">smart AI</a></li>
+              <li><a class="player dropdown-item" data-player-for="o" href="#">human</a></li>
+              <li><a class="player dropdown-item" data-player-for="o" href="#">starter AI</a></li>
+              <li><a class="player dropdown-item" data-player-for="o" href="#">smart AI</a></li>
             </ul>
           </div>
         </div>
@@ -80,10 +79,8 @@
       ga('create', 'UA-68998209-1', 'auto');
       ga('send', 'pageview');
     </script>
-    <script type="text/javascript" src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/node_modules/spin.js/spin.min.js"></script>
+    <!-- Firebase CDN (will be moved to npm in a later step) -->
     <script type="text/javascript" src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
-    <script type="text/javascript" src="src/index.min.js"></script>
+    <script type="module" src="/src/index.js"></script>
   </body>
 </html>

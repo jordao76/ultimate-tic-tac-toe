@@ -1,12 +1,10 @@
-const $ = jQuery;
-
-const { X, O, decode } = require('aye-aye/lib/games/bin-tic-tac-toe');
-const { UltimateTicTacToe } = require('aye-aye/lib/games/ultimate-tic-tac-toe');
-
-const { showSpinner, hideSpinner } = require('./spinner');
-require('./highlight');
-
-const { RTC } = require('./web-rtc');
+import $ from 'jquery';
+import { Modal } from 'bootstrap';
+import { X, O, decode } from 'aye-aye/lib/games/bin-tic-tac-toe';
+import { UltimateTicTacToe } from 'aye-aye/lib/games/ultimate-tic-tac-toe';
+import { showSpinner, hideSpinner } from './spinner';
+import './highlight';
+import { RTC } from './web-rtc';
 
 function buildBoard() {
   const root = document.getElementById('ultimate-tic-tac-toe');
@@ -79,7 +77,7 @@ $(() => {
       game.isWin(O) ? 'O Wins!' :
       'Draw!';
     $('#end-text').text(endText);
-    $('#modal-game-over').modal('show');
+    Modal.getOrCreateInstance(document.getElementById('modal-game-over')).show();
     return true;
   }
 
@@ -129,8 +127,8 @@ $(() => {
   function swapPlayers() {
     const $x = $('#btn-player-x');
     const $o = $('#btn-player-o');
-    const tmp = $x.text();
-    $x.text($o.text());
+    const tmp = $x.text().trim();
+    $x.text($o.text().trim());
     $o.text(tmp);
   }
 
@@ -139,7 +137,7 @@ $(() => {
     const playerFor = $player.data('player-for');
     const $btn = $(`#btn-player-${playerFor}`);
     const playerName = $player.text();
-    const currentPlayerName = $btn.text();
+    const currentPlayerName = $btn.text().trim();
     if (currentPlayerName !== playerName) {
       $btn.text(playerName);
       setup();
@@ -167,7 +165,7 @@ $(() => {
   }
 
   function computerPlayer(agentName = 'minimax', depth = 3) {
-    const worker = new Worker('src/ai-worker.min.js');
+    const worker = new Worker(new URL('./ai-worker.js', import.meta.url), { type: 'module' });
     return {
       setup(done) {
         worker.onmessage = (e) => playAction(e.data.action);
