@@ -11,7 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "aye-aye": "^0.1.7"
+    "aye-aye": "^0.1.7",
+    "firebase": "^12.9.0"
   },
   "devDependencies": {
     "vite": "^7.3.1"
