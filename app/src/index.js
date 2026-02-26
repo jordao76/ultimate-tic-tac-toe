@@ -30,6 +30,26 @@ function makeSvgO() {
   return svg;
 }
 
+function makeBoardOverlaySvg(player) {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 10 10');
+  svg.setAttribute('aria-hidden', 'true');
+  if (player === X) {
+    for (const [x1, y1, x2, y2] of [[1.5, 1.5, 8.5, 8.5], [8.5, 1.5, 1.5, 8.5]]) {
+      const line = document.createElementNS(SVG_NS, 'line');
+      Object.entries({ x1, y1, x2, y2, stroke: 'var(--color-x)', 'stroke-width': '2', 'stroke-linecap': 'round' })
+        .forEach(([k, v]) => line.setAttribute(k, v));
+      svg.appendChild(line);
+    }
+  } else {
+    const circle = document.createElementNS(SVG_NS, 'circle');
+    Object.entries({ cx: '5', cy: '5', r: '4', stroke: 'var(--color-o)', 'stroke-width': '2', fill: 'none' })
+      .forEach(([k, v]) => circle.setAttribute(k, v));
+    svg.appendChild(circle);
+  }
+  return svg;
+}
+
 function buildBoard() {
   const root = document.getElementById('ultimate-tic-tac-toe');
   for (let urow = 0; urow < 3; urow++) {
@@ -96,8 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(`${i},${j}`).classList.add(wonClass);
       }
       if (wonBy != null) {
+        const boardEl = document.getElementById(String(i));
         const wonClass = wonBy === X ? 'x-won-board' : 'o-won-board';
-        document.getElementById(String(i)).classList.add(wonClass);
+        boardEl.classList.add(wonClass);
+        const overlay = document.createElement('div');
+        overlay.className = 'board-overlay';
+        overlay.appendChild(makeBoardOverlaySvg(wonBy));
+        boardEl.appendChild(overlay);
       }
     }
   }
@@ -254,6 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
     hideSpinner();
     for (const el of document.querySelectorAll('.tic-tac-toe')) {
       el.classList.remove('x-won-board', 'o-won-board');
+    }
+    for (const overlay of document.querySelectorAll('.board-overlay')) {
+      overlay.remove();
     }
     for (const tile of document.querySelectorAll('.tile')) {
       tile.classList.remove('x-won-tile', 'o-won-tile');
