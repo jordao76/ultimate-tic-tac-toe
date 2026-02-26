@@ -4,6 +4,32 @@ import { showSpinner, hideSpinner } from './spinner';
 import { highlight } from './highlight';
 import { RTC } from './web-rtc';
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function makeSvgX() {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 10 10');
+  svg.setAttribute('aria-hidden', 'true');
+  for (const [x1, y1, x2, y2] of [[2, 2, 8, 8], [8, 2, 2, 8]]) {
+    const line = document.createElementNS(SVG_NS, 'line');
+    Object.entries({ x1, y1, x2, y2, stroke: 'var(--color-x)', 'stroke-width': '1.8', 'stroke-linecap': 'round' })
+      .forEach(([k, v]) => line.setAttribute(k, v));
+    svg.appendChild(line);
+  }
+  return svg;
+}
+
+function makeSvgO() {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 10 10');
+  svg.setAttribute('aria-hidden', 'true');
+  const circle = document.createElementNS(SVG_NS, 'circle');
+  Object.entries({ cx: '5', cy: '5', r: '3.2', stroke: 'var(--color-o)', 'stroke-width': '1.8', fill: 'none' })
+    .forEach(([k, v]) => circle.setAttribute(k, v));
+  svg.appendChild(circle);
+  return svg;
+}
+
 function buildBoard() {
   const root = document.getElementById('ultimate-tic-tac-toe');
   for (let urow = 0; urow < 3; urow++) {
@@ -95,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const [i, j] = action;
     hideSpinner();
     const tile = document.getElementById(`${i},${j}`);
-    tile.textContent = playerText();
+    tile.innerHTML = '';
+    tile.appendChild(game.nextPlayer === X ? makeSvgX() : makeSvgO());
     highlight(tile);
     game = game.play(action);
     lastAction = action;
@@ -230,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     for (const tile of document.querySelectorAll('.tile')) {
       tile.classList.remove('x-won-tile', 'o-won-tile');
-      tile.textContent = '';
+      tile.innerHTML = '';
     }
   }
 
