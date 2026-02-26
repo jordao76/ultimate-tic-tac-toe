@@ -1,6 +1,6 @@
-const { MinimaxAgent } = require('aye-aye');
-const { MonteCarloAgent } = require('aye-aye/lib/monte-carlo');
-const { UltimateTicTacToe } = require('aye-aye/lib/games/ultimate-tic-tac-toe');
+import { MinimaxAgent } from 'aye-aye';
+import { MonteCarloAgent } from 'aye-aye/lib/monte-carlo';
+import { UltimateTicTacToe } from 'aye-aye/lib/games/ultimate-tic-tac-toe';
 
 let player = null;
 let game = null;

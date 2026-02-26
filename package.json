@@ -5,13 +5,18 @@
   "description": "Ultimate tic tac toe",
   "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "aye-aye": "^0.1.7",
     "bootstrap": "^5.3.8",
+    "jquery": "^4.0.0",
     "spin.js": "^4.1.2"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "web-build-tasks": "0.0.3"
+    "vite": "^7.3.1"
   }
 }

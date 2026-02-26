@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 const RTCPeerConnection =
   window.RTCPeerConnection ||
   window.mozRTCPeerConnection ||
@@ -92,11 +94,11 @@ class Guest {
   }
 }
 
-module.exports = { Host, Guest };
+export { Host, Guest };
 
 // WebRTC with Firebase as a signaling service
 
-const RTC = {
+export const RTC = {
   greet() {
     window.RTC = RTC;
     console.log(
@@ -175,6 +177,4 @@ const RTC = {
   },
 };
 
-jQuery(() => RTC.guest());
-
-module.exports.RTC = RTC;
+$(() => RTC.guest());

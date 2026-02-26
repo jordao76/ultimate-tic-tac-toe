@@ -1,4 +1,4 @@
-const $ = jQuery;
+import $ from 'jquery';
 
 $.fn.highlight = function () {
   return $(this).each(function () {
