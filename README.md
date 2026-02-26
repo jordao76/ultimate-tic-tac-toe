@@ -1,8 +1,6 @@
 # Ultimate Tic Tac Toe
 
-[![Build Status](https://travis-ci.org/jordao76/ultimate-tic-tac-toe.svg)](https://travis-ci.org/jordao76/ultimate-tic-tac-toe)
-[![Dependency Status](https://david-dm.org/jordao76/ultimate-tic-tac-toe.svg)](https://david-dm.org/jordao76/ultimate-tic-tac-toe)
-[![devDependency Status](https://david-dm.org/jordao76/ultimate-tic-tac-toe/dev-status.svg)](https://david-dm.org/jordao76/ultimate-tic-tac-toe#info=devDependencies)
+[![CI](https://github.com/jordao76/ultimate-tic-tac-toe/actions/workflows/ci.yml/badge.svg)](https://github.com/jordao76/ultimate-tic-tac-toe/actions/workflows/ci.yml)
 [![License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/jordao76/ultimate-tic-tac-toe/blob/master/LICENSE.txt)
 
 Online Ultimate tic tac toe against the computer, using [aye-aye](https://github.com/jordao76/aye-aye).
