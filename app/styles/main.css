@@ -2,10 +2,51 @@
   --board-size: min(540px, calc(100vw - 2rem));
   --sub-board-size: calc(var(--board-size) / 3);
   --tile-size: calc(var(--board-size) / 9);
+
+  /* X player */
+  --color-x: #3d7a3d;
+  --color-x-border: #5cb85c;
+  --color-x-playable: rgba(150, 250, 150, 0.5);
+  --color-x-won-tile: rgba(0, 200, 0, 0.5);
+  --color-x-won-board: rgba(0, 250, 0, 0.5);
+
+  /* O player */
+  --color-o: #8b1a17;
+  --color-o-border: #d9534f;
+  --color-o-playable: rgba(250, 150, 150, 0.5);
+  --color-o-won-tile: rgba(200, 0, 0, 0.5);
+  --color-o-won-board: rgba(250, 0, 0, 0.5);
+
+  /* Interaction */
+  --color-hover: rgba(200, 200, 0, 0.5);
+
+  /* Grid lines */
+  --color-grid-major: black;
+  --color-grid-minor: black;
+
+  /* Spinner */
+  --color-spinner-track: #ccc;
+  --color-spinner-head: #555;
+
+  /* Controls */
+  --color-btn-bg: #f8f8f8;
+  --color-btn-bg-hover: #e8e8e8;
+  --color-btn-border: #ccc;
+
+  /* Modal */
+  --color-modal-bg: #d9edf7;
+  --color-modal-text: #31708f;
+  --color-modal-backdrop: rgba(0, 0, 0, 0.4);
+
+  /* Page */
+  --color-bg: #fff;
+  --color-text: #333;
 }
 
 body {
   font-family: "Open Sans", sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 header {
   text-align: center;
@@ -23,7 +64,7 @@ header {
   height: var(--sub-board-size);
 }
 .board-row:nth-child(1), .board-row:nth-child(2) {
-  box-shadow: 0px 3px black;
+  box-shadow: 0px 3px var(--color-grid-major);
 }
 .tic-tac-toe {
   display: flex;
@@ -32,14 +73,14 @@ header {
   height: var(--sub-board-size);
 }
 .tic-tac-toe:nth-child(1), .tic-tac-toe:nth-child(2) {
-  box-shadow: 3px 0px black;
+  box-shadow: 3px 0px var(--color-grid-major);
 }
 .ttt-row {
   display: flex;
   height: var(--tile-size);
 }
 .ttt-row:nth-child(1), .ttt-row:nth-child(2) {
-  box-shadow: 0px 1px black;
+  box-shadow: 0px 1px var(--color-grid-minor);
 }
 .tile {
   width: var(--tile-size);
@@ -49,31 +90,31 @@ header {
   text-align: center;
 }
 .tile:nth-child(1), .tile:nth-child(2) {
-  box-shadow: 1px 0px black;
+  box-shadow: 1px 0px var(--color-grid-minor);
 }
 
 /* ── Tile states ─────────────────────────────────────────────── */
 .x-playable-tile {
-  background-color: rgba(150, 250, 150, 0.5);
+  background-color: var(--color-x-playable);
 }
 .o-playable-tile {
-  background-color: rgba(250, 150, 150, 0.5);
+  background-color: var(--color-o-playable);
 }
 .human-playable-tile:hover {
-  background-color: rgba(200, 200, 0, 0.5);
+  background-color: var(--color-hover);
   cursor: pointer;
 }
 .x-won-tile {
-  background-color: rgba(0, 200, 0, 0.5);
+  background-color: var(--color-x-won-tile);
 }
 .o-won-tile {
-  background-color: rgba(200, 0, 0, 0.5);
+  background-color: var(--color-o-won-tile);
 }
 .x-won-board {
-  background-color: rgba(0, 250, 0, 0.5);
+  background-color: var(--color-x-won-board);
 }
 .o-won-board {
-  background-color: rgba(250, 0, 0, 0.5);
+  background-color: var(--color-o-won-board);
 }
 
 /* ── Controls row ────────────────────────────────────────────── */
@@ -95,8 +136,8 @@ header {
   display: none;
   width: 28px;
   height: 28px;
-  border: 3px solid #ccc;
-  border-top-color: #555;
+  border: 3px solid var(--color-spinner-track);
+  border-top-color: var(--color-spinner-head);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -114,16 +155,16 @@ header {
   font-size: 1rem;
   padding: 4px 8px;
   border-radius: 4px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--color-btn-border);
   cursor: pointer;
 }
 .player-select-x {
-  border-color: #5cb85c;
-  color: #3d7a3d;
+  border-color: var(--color-x-border);
+  color: var(--color-x);
 }
 .player-select-o {
-  border-color: #d9534f;
-  color: #8b1a17;
+  border-color: var(--color-o-border);
+  color: var(--color-o);
 }
 #commands {
   text-align: right;
@@ -132,12 +173,12 @@ header {
   font-size: 1rem;
   padding: 4px 12px;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #f8f8f8;
+  border: 1px solid var(--color-btn-border);
+  background: var(--color-btn-bg);
   cursor: pointer;
 }
 #btn-new-game:hover {
-  background: #e8e8e8;
+  background: var(--color-btn-bg-hover);
 }
 
 /* ── Credit ──────────────────────────────────────────────────── */
@@ -154,11 +195,11 @@ header {
   border-radius: 8px;
   padding: 2rem 3rem;
   text-align: center;
-  color: #31708f;
-  background-color: #d9edf7;
+  color: var(--color-modal-text);
+  background-color: var(--color-modal-bg);
 }
 #modal-game-over::backdrop {
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--color-modal-backdrop);
 }
 #end-text {
   margin: 0;
