@@ -309,3 +309,103 @@ header {
   from { opacity: 0.7; }
   to   { opacity: 0; }
 }
+
+/* ── Header theme toggle ─────────────────────────────────────── */
+header {
+  position: relative;
+}
+#btn-theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.8rem;
+  padding: 5px 14px;
+  border-radius: 16px;
+  border: 1.5px solid var(--color-btn-border);
+  background: var(--color-btn-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+#btn-theme-toggle:hover {
+  background: var(--color-btn-bg-hover);
+}
+
+/* ── Dark mode ───────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #16161e;
+    --color-text: #cdd6f4;
+    --color-grid-major: #45475a;
+    --color-grid-minor: #313244;
+    --color-x: #a6e3a1;
+    --color-x-border: #40a02b;
+    --color-x-playable: rgba(166, 227, 161, 0.18);
+    --color-x-won-tile: rgba(64, 160, 43, 0.35);
+    --color-x-won-board: rgba(64, 160, 43, 0.22);
+    --color-o: #f38ba8;
+    --color-o-border: #e64553;
+    --color-o-playable: rgba(243, 139, 168, 0.18);
+    --color-o-won-tile: rgba(230, 69, 83, 0.35);
+    --color-o-won-board: rgba(230, 69, 83, 0.22);
+    --color-hover: rgba(249, 226, 175, 0.22);
+    --color-spinner-track: #45475a;
+    --color-spinner-head: #cdd6f4;
+    --color-btn-bg: #1e1e2e;
+    --color-btn-bg-hover: #313244;
+    --color-btn-border: #45475a;
+    --color-modal-bg: #1e1e2e;
+    --color-modal-text: #cdd6f4;
+    --color-modal-backdrop: rgba(0, 0, 0, 0.65);
+  }
+}
+html[data-theme="dark"] {
+  --color-bg: #16161e;
+  --color-text: #cdd6f4;
+  --color-grid-major: #45475a;
+  --color-grid-minor: #313244;
+  --color-x: #a6e3a1;
+  --color-x-border: #40a02b;
+  --color-x-playable: rgba(166, 227, 161, 0.18);
+  --color-x-won-tile: rgba(64, 160, 43, 0.35);
+  --color-x-won-board: rgba(64, 160, 43, 0.22);
+  --color-o: #f38ba8;
+  --color-o-border: #e64553;
+  --color-o-playable: rgba(243, 139, 168, 0.18);
+  --color-o-won-tile: rgba(230, 69, 83, 0.35);
+  --color-o-won-board: rgba(230, 69, 83, 0.22);
+  --color-hover: rgba(249, 226, 175, 0.22);
+  --color-spinner-track: #45475a;
+  --color-spinner-head: #cdd6f4;
+  --color-btn-bg: #1e1e2e;
+  --color-btn-bg-hover: #313244;
+  --color-btn-border: #45475a;
+  --color-modal-bg: #1e1e2e;
+  --color-modal-text: #cdd6f4;
+  --color-modal-backdrop: rgba(0, 0, 0, 0.65);
+}
+html[data-theme="light"] {
+  --color-bg: #fff;
+  --color-text: #333;
+  --color-grid-major: black;
+  --color-grid-minor: black;
+  --color-x: #3d7a3d;
+  --color-x-border: #5cb85c;
+  --color-x-playable: rgba(150, 250, 150, 0.5);
+  --color-x-won-tile: rgba(0, 200, 0, 0.5);
+  --color-x-won-board: rgba(0, 250, 0, 0.5);
+  --color-o: #8b1a17;
+  --color-o-border: #d9534f;
+  --color-o-playable: rgba(250, 150, 150, 0.5);
+  --color-o-won-tile: rgba(200, 0, 0, 0.5);
+  --color-o-won-board: rgba(250, 0, 0, 0.5);
+  --color-hover: rgba(200, 200, 0, 0.5);
+  --color-spinner-track: #ccc;
+  --color-spinner-head: #555;
+  --color-btn-bg: #f8f8f8;
+  --color-btn-bg-hover: #e8e8e8;
+  --color-btn-border: #ccc;
+  --color-modal-bg: #d9edf7;
+  --color-modal-text: #31708f;
+  --color-modal-backdrop: rgba(0, 0, 0, 0.4);
+}
