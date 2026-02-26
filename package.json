@@ -6,15 +6,13 @@
   "author": "Rodrigo Jordao <rodrigo.jordao@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "aye-aye": "^0.1.7"
+    "aye-aye": "^0.1.7",
+    "bootstrap": "^5.3.8",
+    "spin.js": "^4.1.2"
   },
   "devDependencies": {
-    "bower": "^1.7.9",
     "coffee-script": "^1.10.0",
     "gulp": "^3.9.1",
     "web-build-tasks": "0.0.3"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.11"
   }
 }
