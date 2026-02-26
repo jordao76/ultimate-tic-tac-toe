@@ -102,11 +102,27 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease;
 }
 .tile > svg {
   width: 62%;
   height: 62%;
   flex-shrink: 0;
+}
+@keyframes tile-pop {
+  0%   { transform: scale(0.2); opacity: 0; }
+  65%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.tile-played > svg {
+  animation: tile-pop 0.28s ease forwards;
+}
+@keyframes board-overlay-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 0.7; transform: scale(1); }
+}
+.board-overlay {
+  animation: board-overlay-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 .tile:nth-child(1), .tile:nth-child(2) {
   box-shadow: 1px 0px var(--color-grid-minor);

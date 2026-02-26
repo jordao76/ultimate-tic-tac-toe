@@ -148,6 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tile = document.getElementById(`${i},${j}`);
     tile.innerHTML = '';
     tile.appendChild(game.nextPlayer === X ? makeSvgX() : makeSvgO());
+    tile.classList.add('tile-played');
+    tile.addEventListener('animationend', () => tile.classList.remove('tile-played'), { once: true });
     highlight(tile);
     game = game.play(action);
     lastAction = action;
