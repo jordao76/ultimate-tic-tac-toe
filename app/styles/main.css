@@ -81,6 +81,25 @@ header {
 }
 #spinner {
   height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#spinner::after {
+  content: '';
+  display: none;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #ccc;
+  border-top-color: #555;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+#spinner.spinner-active::after {
+  display: block;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 #players {
   text-align: center;
