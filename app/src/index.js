@@ -3,6 +3,7 @@ import { UltimateTicTacToe } from 'aye-aye/lib/games/ultimate-tic-tac-toe';
 import { showSpinner, hideSpinner } from './spinner';
 import { highlight } from './highlight';
 import { RTC } from './web-rtc';
+import { buildBoard } from './board';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -50,35 +51,8 @@ function makeBoardOverlaySvg(player) {
   return svg;
 }
 
-function buildBoard() {
-  const root = document.getElementById('ultimate-tic-tac-toe');
-  for (let urow = 0; urow < 3; urow++) {
-    const boardRow = document.createElement('div');
-    boardRow.className = 'board-row';
-    for (let ucol = 0; ucol < 3; ucol++) {
-      const board = urow * 3 + ucol;
-      const ttt = document.createElement('div');
-      ttt.className = 'tic-tac-toe';
-      ttt.id = board;
-      for (let row = 0; row < 3; row++) {
-        const tttRow = document.createElement('div');
-        tttRow.className = 'ttt-row';
-        for (let col = 0; col < 3; col++) {
-          const tile = document.createElement('div');
-          tile.className = 'tile';
-          tile.id = `${board},${row * 3 + col}`;
-          tttRow.appendChild(tile);
-        }
-        ttt.appendChild(tttRow);
-      }
-      boardRow.appendChild(ttt);
-    }
-    root.insertBefore(boardRow, root.firstChild);
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  buildBoard();
+  buildBoard(document.getElementById('ultimate-tic-tac-toe'));
 
   // ── Theme toggle ────────────────────────────────────────────
   const html = document.documentElement;
@@ -141,10 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const boardEl = document.getElementById(String(i));
         const wonClass = wonBy === X ? 'x-won-board' : 'o-won-board';
         boardEl.classList.add(wonClass);
-        const overlay = document.createElement('div');
-        overlay.className = 'board-overlay';
-        overlay.appendChild(makeBoardOverlaySvg(wonBy));
-        boardEl.appendChild(overlay);
+        if (!boardEl.querySelector('.board-overlay')) {
+          const overlay = document.createElement('div');
+          overlay.className = 'board-overlay';
+          overlay.appendChild(makeBoardOverlaySvg(wonBy));
+          boardEl.appendChild(overlay);
+        }
       }
     }
   }
