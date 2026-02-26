@@ -1,21 +1,26 @@
+:root {
+  --board-size: min(540px, calc(100vw - 2rem));
+  --sub-board-size: calc(var(--board-size) / 3);
+  --tile-size: calc(var(--board-size) / 9);
+}
+
 body {
   font-family: "Open Sans", sans-serif;
 }
 header {
   text-align: center;
-  height: 10rem;
-  padding-top: 10px;
+  padding: 2rem 0 1rem;
 }
 
 /* ── Board layout ────────────────────────────────────────────── */
 #ultimate-tic-tac-toe {
   cursor: default;
   margin: 0 auto;
-  width: 540px;
+  width: var(--board-size);
 }
 .board-row {
   display: flex;
-  height: 180px;
+  height: var(--sub-board-size);
 }
 .board-row:nth-child(1), .board-row:nth-child(2) {
   box-shadow: 0px 3px black;
@@ -23,24 +28,24 @@ header {
 .tic-tac-toe {
   display: flex;
   flex-direction: column;
-  width: 180px;
-  height: 180px;
+  width: var(--sub-board-size);
+  height: var(--sub-board-size);
 }
 .tic-tac-toe:nth-child(1), .tic-tac-toe:nth-child(2) {
   box-shadow: 3px 0px black;
 }
 .ttt-row {
   display: flex;
-  height: 60px;
+  height: var(--tile-size);
 }
 .ttt-row:nth-child(1), .ttt-row:nth-child(2) {
   box-shadow: 0px 1px black;
 }
 .tile {
-  width: 60px;
-  height: 60px;
-  font-size: 2.5rem;
-  line-height: 60px;
+  width: var(--tile-size);
+  height: var(--tile-size);
+  font-size: calc(var(--tile-size) * 0.667);
+  line-height: var(--tile-size);
   text-align: center;
 }
 .tile:nth-child(1), .tile:nth-child(2) {
