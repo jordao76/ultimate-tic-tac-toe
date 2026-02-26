@@ -11,8 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "aye-aye": "^0.1.7",
-    "spin.js": "^4.1.2"
+    "aye-aye": "^0.1.7"
   },
   "devDependencies": {
     "vite": "^7.3.1"
