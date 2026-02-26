@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 const RTCPeerConnection =
   window.RTCPeerConnection ||
   window.mozRTCPeerConnection ||
@@ -177,4 +175,5 @@ export const RTC = {
   },
 };
 
-$(() => RTC.guest());
+// ES modules are deferred; DOM is ready when this runs
+RTC.guest();
