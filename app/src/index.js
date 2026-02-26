@@ -80,6 +80,23 @@ function buildBoard() {
 document.addEventListener('DOMContentLoaded', () => {
   buildBoard();
 
+  // ── Theme toggle ────────────────────────────────────────────
+  const html = document.documentElement;
+  const themeBtn = document.getElementById('btn-theme-toggle');
+  const mql = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function applyTheme(dark) {
+    html.dataset.theme = dark ? 'dark' : 'light';
+    themeBtn.textContent = dark ? 'Light mode' : 'Dark mode';
+  }
+  applyTheme(mql.matches);
+  mql.addEventListener('change', (e) => {
+    if (!html.dataset.theme) applyTheme(e.matches);
+  });
+  themeBtn.addEventListener('click', () => {
+    applyTheme(html.dataset.theme !== 'dark');
+  });
+
   let game = null;
   let lastAction = null;
   let humanClickController = null;
