@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "aye-aye": "^0.1.7",
-    "bootstrap": "^5.3.8",
     "spin.js": "^4.1.2"
   },
   "devDependencies": {
