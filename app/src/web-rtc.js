@@ -1,3 +1,9 @@
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, set, update, get, onValue, onDisconnect } from 'firebase/database';
+
+const firebaseApp = initializeApp({ databaseURL: 'https://ut3.firebaseio.com' });
+const db = getDatabase(firebaseApp);
+
 const RTCPeerConnection =
   window.RTCPeerConnection ||
   window.mozRTCPeerConnection ||
@@ -94,7 +100,7 @@ class Guest {
 
 export { Host, Guest };
 
-// WebRTC with Firebase as a signaling service
+// WebRTC with Firebase Realtime Database as a signaling service
 
 export const RTC = {
   greet() {
@@ -109,18 +115,24 @@ export const RTC = {
     this.isHost = true;
     const host = new Host();
     const key = (Math.random() * 99999 + 10000) | 0;
-    const gameRef = new Firebase('https://ut3.firebaseio.com/' + key);
+    const gameRef = ref(db, String(key));
     host.onoffercreated = (offerJSON) => {
-      gameRef.onDisconnect().remove();
-      gameRef.set({ offer: JSON.parse(offerJSON) });
+      onDisconnect(gameRef).remove();
+      set(gameRef, { offer: JSON.parse(offerJSON) });
       window.location.hash = key;
       console.log('Give this URL to the other player:');
       console.log(window.location.href);
-      gameRef.on('value', (snap) => {
+      const unsubscribe = onValue(gameRef, (snap) => {
         const data = snap.val();
         if (!data?.answer) return;
         host.acceptAnswer(JSON.stringify(data.answer));
+        unsubscribe();
       });
+      host.onchannelopen = () => {
+        console.log('channel open');
+        RTC.send = (m) => host.send(m);
+        RTC.ondatachannelopen?.();
+      };
     };
     host.ondisconnected = () => {
       console.log('peer disconnected!');
@@ -130,7 +142,6 @@ export const RTC = {
     host.onchannelopen = () => {
       console.log('channel open');
       RTC.send = (m) => host.send(m);
-      gameRef.off('value');
       RTC.ondatachannelopen?.();
     };
     host.onmessage = (data) => {
@@ -144,10 +155,10 @@ export const RTC = {
     const hash = window.location.hash;
     if (!hash) return;
     this.isGuest = true;
-    const gameRef = new Firebase('https://ut3.firebaseio.com/' + hash.substring(1));
+    const gameRef = ref(db, hash.substring(1));
     const guest = new Guest();
     guest.onanswercreated = (answerJSON) => {
-      gameRef.update({ answer: JSON.parse(answerJSON) });
+      update(gameRef, { answer: JSON.parse(answerJSON) });
     };
     guest.ondisconnected = () => {
       console.log('peer disconnected!');
@@ -163,7 +174,7 @@ export const RTC = {
       console.log('GUEST: got data', data);
       RTC.onmessage?.(data);
     };
-    gameRef.once('value', (snap) => {
+    get(gameRef).then((snap) => {
       const data = snap.val();
       if (data?.offer) {
         guest.offer(JSON.stringify(data.offer));
